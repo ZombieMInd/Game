@@ -9,6 +9,7 @@ int main()
 	float CurrentFrame = 0;
 	sf::Clock clock;
 	Player player(sf::Vector2i(100, 100), 100);
+	Player enemy(sf::Vector2i(100, 100), 100);
 
 	while (window.isOpen())
 	{
@@ -28,9 +29,11 @@ int main()
 
 		player.controle();
 		player.textureRotate(pos);
+		enemy.textureRotate(player.sprite.getPosition());
 		player.move(time);
 		window.clear();
 		window.draw(player.sprite);
+		window.draw(enemy.sprite);
 		window.display();
 	}
 	//system("pause");

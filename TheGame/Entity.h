@@ -10,7 +10,9 @@ class Entity
 	int width;
 	sf::String file;
 	sf::Texture texture;
-	
+	sf::Vector2f posOld;
+	sf::Vector2f direction;
+	float rotOld;
 
 public:
 	sf::Vector2f speed;
@@ -31,6 +33,10 @@ Entity::Entity(sf::Vector2i pos, sf::Vector2i s, sf::String f)
 	position = pos;
 	size = s;
 	speed = sf::Vector2f(0, 0);
+	posOld = sf::Vector2f(0, 0);
+	direction = sf::Vector2f(0, 1);
+	rotOld = 0;
+	sprite.setPosition(position.x, position.y);
 }
 
 
@@ -46,11 +52,16 @@ void Entity::setTexturePos(sf::Vector2i pos) {
 
 void Entity::textureRotate(sf::Vector2f pos) {
 	sf::Vector2f dir;
-	dir.x = pos.x - position.x;
-	dir.y = pos.y - position.y;
-	float rotation = (atan2(dir.y, dir.x) * 180 / 3.14159265);
-	sprite.rotate(rotation);
+	if (abs(pos.x - posOld.x) > 0.005 || abs(pos.y - posOld.y) > 0.005) {
+		sprite.setRotation(0);
+		dir.x = pos.x - position.x;
+		dir.y = pos.y - position.y;
+		float rotation = (atan2(dir.y, dir.x) * 180. / 3.14159265);
+		//std::cout << rotation << " " <<  std::endl;
+		sprite.rotate(rotation);
+	}
 }
+
 
 void Entity::move(float time) {
 	position.x += speed.x * time;
