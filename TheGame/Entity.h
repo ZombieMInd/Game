@@ -4,7 +4,7 @@
 
 class Entity
 {
-	sf::Vector2i position;
+	sf::Vector2f position;
 	sf::Vector2i size;
 	int height;
 	int width;
@@ -17,15 +17,17 @@ class Entity
 public:
 	sf::Vector2f speed;
 	sf::Sprite sprite;
-	Entity(sf::Vector2i pos, sf::Vector2i s, sf::String f);
+	Entity(sf::Vector2f pos, sf::Vector2i s, sf::String f);
 	~Entity();
 	void setTexturePos(sf::Vector2i pos);
 	void textureRotate(sf::Vector2f pos);
 	void move(float time);
+	void setPosition(sf::Vector2f pos);
+	void setPosition(float x, float y);
 };
 
 
-Entity::Entity(sf::Vector2i pos, sf::Vector2i s, sf::String f)
+Entity::Entity(sf::Vector2f pos, sf::Vector2i s, sf::String f)
 {
 	file = f;
 	texture.loadFromFile("assets/" + file);
@@ -66,9 +68,18 @@ void Entity::textureRotate(sf::Vector2f pos) {
 void Entity::move(float time) {
 	position.x += speed.x * time;
 	position.y += speed.y * time;
+	//std::cout << time << std::endl;
 	speed.x = 0;
 	speed.y = 0;
 	sprite.setPosition(position.x, position.y);
+}
+
+void Entity::setPosition(sf::Vector2f pos) {
+	position = pos;
+}
+void Entity::setPosition(float x, float y) {
+	position.x = x;
+	position.y = y;
 }
 
 class Player : public Entity {
@@ -76,11 +87,11 @@ private:
 	int hp;
 
 public:
-	Player(sf::Vector2i pos, int health);
+	Player(sf::Vector2f pos, int health);
 	void controle();
 };
 
-Player::Player(sf::Vector2i pos, int health):
+Player::Player(sf::Vector2f pos, int health):
 	Entity(pos, sf::Vector2i(89, 89), "G_v01.png"){
 	hp = health;
 	setTexturePos(sf::Vector2i(235, 100));

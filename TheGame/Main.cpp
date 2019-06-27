@@ -8,14 +8,12 @@ int main()
 
 	float CurrentFrame = 0;
 	sf::Clock clock;
-	Player player(sf::Vector2i(100, 100), 100);
-	Player enemy(sf::Vector2i(100, 100), 100);
+	Player player(sf::Vector2f(100, 100), 100);
 
 	while (window.isOpen())
 	{
-		float time = clock.getElapsedTime().asMicroseconds();
-		clock.restart();
-		time = time / 400;
+		float time = clock.restart().asMicroseconds();
+		time = time / 600;
 
 		sf::Vector2i pixelPos = sf::Mouse::getPosition(window);//забираем коорд курсора
 		sf::Vector2f pos = window.mapPixelToCoords(pixelPos);
@@ -29,11 +27,9 @@ int main()
 
 		player.controle();
 		player.textureRotate(pos);
-		enemy.textureRotate(player.sprite.getPosition());
 		player.move(time);
 		window.clear();
 		window.draw(player.sprite);
-		window.draw(enemy.sprite);
 		window.display();
 	}
 	//system("pause");
