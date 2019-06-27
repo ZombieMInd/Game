@@ -14,7 +14,7 @@ int main()
 	{
 		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
-		time = time / 800;
+		time = time / 400;
 
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -24,7 +24,7 @@ int main()
 		}
 
 		player.controle();
-		player.move(player.speed, time);
+		player.move(time);
 		window.clear();
 		window.draw(player.sprite);
 		window.display();
