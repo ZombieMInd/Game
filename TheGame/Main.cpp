@@ -16,6 +16,9 @@ int main()
 		clock.restart();
 		time = time / 400;
 
+		sf::Vector2i pixelPos = sf::Mouse::getPosition(window);//забираем коорд курсора
+		sf::Vector2f pos = window.mapPixelToCoords(pixelPos);
+
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -24,6 +27,7 @@ int main()
 		}
 
 		player.controle();
+		player.textureRotate(pos);
 		player.move(time);
 		window.clear();
 		window.draw(player.sprite);
