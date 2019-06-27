@@ -18,6 +18,7 @@ public:
 	Entity(sf::Vector2i pos, sf::Vector2i s, sf::String f);
 	~Entity();
 	void setTexturePos(sf::Vector2i pos);
+	void textureRotate(sf::Window window);
 	void move(float time);
 };
 
@@ -40,7 +41,14 @@ Entity::~Entity()
 void Entity::setTexturePos(sf::Vector2i pos) {
 	sprite.setTextureRect(sf::IntRect(pos.x, pos.y, size.x, size.y));
 	sprite.scale(sf::Vector2f(0.112, 0.112));
+	sprite.setOrigin(size.x / 2, size.y / 2);
 }
+
+//void Entity::textureRotate(sf::Window window) {
+	//sf::Vector2i pixelPos = sf::Mouse::getPosition(window);//забираем коорд курсора
+	//sf::Vector2f pos = window.mapPixelToCoords(pixelPos);
+	//sprite.rotate();
+//}
 
 void Entity::move(float time) {
 	position.x += speed.x * time;
