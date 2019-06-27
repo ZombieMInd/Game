@@ -46,9 +46,10 @@ Entity::~Entity()
 {
 }
 
+// функция чтобы вытаскивать спрайт из текстуры
 void Entity::setTexturePos(sf::Vector2i pos) {
 	sprite.setTextureRect(sf::IntRect(pos.x, pos.y, size.x, size.y));
-	sprite.scale(sf::Vector2f(0.112, 0.112));
+	sprite.scale(sf::Vector2f(0.336, 0.336));
 	sprite.setOrigin(size.x / 2, size.y / 2);
 }
 

@@ -48,7 +48,7 @@ int main()
 	sf::Clock clock;
 	Player player(sf::Vector2f(100, 100), 100);
 	Image map_image;
-	map_image.loadFromFile("images/G_v01.png");
+	map_image.loadFromFile("assets/G_v01.png");
 	Texture map;
 	map.loadFromImage(map_image);
 	Sprite s_map;
