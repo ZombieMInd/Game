@@ -9,12 +9,6 @@ const float h = 40;
 const float w = 40;
 const int blcsize = 90;
 void interactionWithMap(Player& pp,float x, float y, float dx, float dy) {
-	//ф-ция взаимодействия с картой
-	/*float dx = pp.speed.x;
-	float dy = pp.speed.y;
-	sf::Vector2f v = pp.sprite.getPosition();
-	float x = v.x,startx=x;
-	float y = v.y,starty=y;*/
 	float startx = x;
 	float starty = y;
 	for (int i = y / blcsize; i < (y + h) / blcsize; i++) {
@@ -25,7 +19,7 @@ void interactionWithMap(Player& pp,float x, float y, float dx, float dy) {
 					pp.setPosition(startx, y);
 				}
 				if (dy < 0){
-					y = i * blcsize + blcsize;
+					y = i * blcsize + h+ 4*h/3;
 					pp.setPosition(startx, y);
 				}
 				if (dx > 0){
@@ -33,7 +27,7 @@ void interactionWithMap(Player& pp,float x, float y, float dx, float dy) {
 					pp.setPosition(x, starty);
 				}
 				if (dx < 0){
-					x = j * blcsize + blcsize;
+					x = j * blcsize + w+ 4*w/3;
 					pp.setPosition(x, starty);
 				}
 				//pp.setPosition(x, y);
