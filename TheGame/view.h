@@ -7,7 +7,7 @@ void GetPlayerCoordinateForView(float x, float y) {
 	float tempX = x; float tempY = y;
 	if (x < 540) tempX = 540;//убираем из вида левую сторону
 	if (y < 500) tempY = 500;//верхнюю сторону
-	if (y > 554) tempY = 554;//нижнюю сторону	
+	if (y > 1750) tempY = 1750;//нижнюю сторону	
 	if (x > 3100) tempX = 3100; // правую границу
 	// я подобрал их такими чтобы они легли на карту
 	view.setCenter(tempX, tempY); //следим за игроком, передавая его координаты. 

@@ -36,12 +36,14 @@ void interactionWithMap(Player& player, float x, float y, float dx, float dy) {
 			}
 			if (TileMap[i][j] == 'b') {
 				key = true;
+				map_i = i;
+				map_j=j;
 			}
 		}
 	}
 }
 void opening_chest() {
-
+	TileMap[map_i][map_j] = 't';
 }
 
 int main()
@@ -84,6 +86,9 @@ int main()
 				if (TileMap[i][j] == 'b') {
 					s_map.setTextureRect(IntRect(470, 0, 90, 90));
 				}
+				if (TileMap[i][j] == 't') {
+					s_map.setTextureRect(IntRect(470, 129, 90, 90));
+				}
 				if ((TileMap[i][j] == '0')) {
 					s_map.setTextureRect(IntRect(0, 0, 90, 90));
 				}
@@ -106,8 +111,8 @@ int main()
 		//text.setColor(sf::Color::Red);
 		text.setStyle(sf::Text::Bold | sf::Text::Underlined);
 		if (key) {
-			text.setString("Press (A) to open this chest");
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+			text.setString("Press (Z) to open this chest");
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
 				opening_chest();
 			}
 		}
@@ -117,8 +122,6 @@ int main()
 		key = false;
 		text.setPosition(v.x + 45, v.y);
 		window.draw(text);
-
-
 		window.setView(view);
 		player.textureRotate(pos);
 		window.draw(player.sprite);
