@@ -3,50 +3,55 @@
 #include "Entity.h"
 #include "map.h"
 #include "view.h"
+
 using namespace sf;
 // размер персонажа
-const float h = 5;
-const float w = 5;
-
-void interactionWithMap(float x, float y, float dx, float dy){
-	Player player1(sf::Vector2f(150, 150), 100);//ф-ция взаимодействия с картой
-	for (int i = y / 90; i < (y + h) / 90; i++) {//проходимся по тайликам, контактирующим с игроком,, то есть по всем квадратикам размера 32*32, которые мы окрашивали в 9 уроке. про условия читайте ниже.
-		for (int j = x / 90; j < (x + w) / 90; j++){//икс делим на 32, тем самым получаем левый квадратик, с которым персонаж соприкасается. (он ведь больше размера 32*32, поэтому может одновременно стоять на нескольких квадратах). А j<(x + w) / 32 - условие ограничения координат по иксу. то есть координата самого правого квадрата, который соприкасается с персонажем. таким образом идем в цикле слева направо по иксу, проходя по от левого квадрата (соприкасающегося с героем), до правого квадрата (соприкасающегося с героем)
-			if (TileMap[i][j] == '0'){//если наш квадратик соответствует символу 0 (стена), то проверяем "направление скорости" персонажа:
-				if (dy > 0){
-					y = i * 90 - h;
-					player1.setPosition(x, y);
+const int BLOCK_SIZE = 90;
+bool key = false;
+void interactionWithMap(Player& player, float x, float y, float dx, float dy) {
+	float h, w;
+	h = player.getRealSize().y / 2;
+	w = player.getRealSize().x / 2;
+	y -= h;
+	x -= w;
+	float startX = x;
+	float startY = y;
+	for (int i = y / BLOCK_SIZE; i < (startY + 2 * h) / BLOCK_SIZE; i++) {
+		for (int j = x / BLOCK_SIZE; j < (startX + 2 * w) / BLOCK_SIZE; j++) {
+			//int j = (startX + w) / blcsize;
+			if (TileMap[i][j] == '0') {
+				if (dy > 0) {
+					y = i * BLOCK_SIZE - 2 * h;
 				}
-				if (dy < 0){
-					y = i * 90 + 90;
-					player1.setPosition(x, y);
+				if (dy < 0) {
+					y = (i + 1) * BLOCK_SIZE;
 				}
-				if (dx > 0){
-					x = j * 90 - w;
-					player1.setPosition(x, y);
+				if (dx > 0) {
+					x = j * BLOCK_SIZE - 2 * w;
 				}
-				if (dx < 0){
-					x = j * 90 + 90;
-					player1.setPosition(x, y);
+				if (dx < 0) {
+					x = (j + 1) * BLOCK_SIZE;
 				}
+				player.setPosition(x + w, y + h);
 			}
-			if (TileMap[i][j] == 'b') { //если символ равен 's' (камень)
-
-				TileMap[i][j] = ' ';//убираем камень, типа взяли бонус. можем и не убирать, кстати.
+			if (TileMap[i][j] == 'b') {
+				key = true;
 			}
 		}
 	}
 }
+void opening_chest() {
 
+}
 
 int main()
 {
-	
+
 	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
 
 	float CurrentFrame = 0;
 	sf::Clock clock;
-	Player player(sf::Vector2f(100, 100), 100);
+	Player player(sf::Vector2f(150, 150), 100);
 	Image map_image;
 	map_image.loadFromFile("assets/G_v01.png");
 	Texture map;
@@ -68,21 +73,19 @@ int main()
 				window.close();
 		}
 		sf::Vector2f v(0, 0);
-		v=player.sprite.getPosition();
+		v = player.sprite.getPosition();
 		GetPlayerCoordinateForView(v.x, v.y);
-		//interactionWithMap(v.x,v.y,dx,dy);
-		//window.setView(view);
 		window.clear();
 		for (int i = 0; i < HEIGHT_MAP; i++) {
 			for (int j = 0; j < WIDTH_MAP; j++) {
 				if (TileMap[i][j] == ' ') {
-					s_map.setTextureRect(IntRect(0, 0, 90, 90));
+					s_map.setTextureRect(IntRect(360, 0, 90, 90));
 				}
 				if (TileMap[i][j] == 'b') {
-					s_map.setTextureRect(IntRect(465, 0, 90, 90));
+					s_map.setTextureRect(IntRect(470, 0, 90, 90));
 				}
 				if ((TileMap[i][j] == '0')) {
-					s_map.setTextureRect(IntRect(360, 0, 90, 90));
+					s_map.setTextureRect(IntRect(0, 0, 90, 90));
 				}
 				//s_map.scale(sf::Vector2f(0.112, 0.112));
 				s_map.setPosition(j * 90, i * 90);
@@ -93,13 +96,31 @@ int main()
 		player.controle();
 		float dx = player.speed.x;
 		float dy = player.speed.y;
-		v = player.sprite.getPosition();
-		interactionWithMap(v.x, v.y, dx, dy);
-		window.setView(view);
-
-		player.textureRotate(pos);
+		//v = player.sprite.getPosition();
 		player.move(time);
-		//window.clear();
+		v = player.sprite.getPosition();
+		interactionWithMap(player, v.x, v.y, dx, dy);
+		Font font;
+		font.loadFromFile("assets/CyrilicOld.ttf");
+		Text text("", font, 32);
+		//text.setColor(sf::Color::Red);
+		text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+		if (key) {
+			text.setString("Press (A) to open this chest");
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+				opening_chest();
+			}
+		}
+		else {
+			text.setString("");
+		}
+		key = false;
+		text.setPosition(v.x + 45, v.y);
+		window.draw(text);
+
+
+		window.setView(view);
+		player.textureRotate(pos);
 		window.draw(player.sprite);
 		window.display();
 	}

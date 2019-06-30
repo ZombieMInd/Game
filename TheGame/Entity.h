@@ -1,11 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
-
+const float PLAYER_SCALE = 0.5;
 class Entity
 {
 	sf::Vector2f position;
 	sf::Vector2i size;
+	sf::Vector2f realSize;
 	int height;
 	int width;
 	sf::String file;
@@ -24,6 +25,7 @@ public:
 	void move(float time);
 	void setPosition(sf::Vector2f pos);
 	void setPosition(float x, float y);
+	sf::Vector2f getRealSize();
 };
 
 
@@ -46,10 +48,11 @@ Entity::~Entity()
 {
 }
 
-// функция чтобы вытаскивать спрайт из текстуры
 void Entity::setTexturePos(sf::Vector2i pos) {
 	sprite.setTextureRect(sf::IntRect(pos.x, pos.y, size.x, size.y));
-	sprite.scale(sf::Vector2f(0.336, 0.336));
+	sprite.scale(sf::Vector2f(PLAYER_SCALE, PLAYER_SCALE));
+	realSize.x = size.x*PLAYER_SCALE;
+	realSize.y = size.y*PLAYER_SCALE;
 	sprite.setOrigin(size.x / 2, size.y / 2);
 }
 
@@ -83,6 +86,10 @@ void Entity::setPosition(float x, float y) {
 	position.y = y;
 }
 
+sf::Vector2f Entity::getRealSize() {
+	return realSize;
+}
+
 class Player : public Entity {
 private:
 	int hp;
@@ -92,24 +99,24 @@ public:
 	void controle();
 };
 
-Player::Player(sf::Vector2f pos, int health):
-	Entity(pos, sf::Vector2i(89, 89), "G_v01.png"){
+Player::Player(sf::Vector2f pos, int health) :
+	Entity(pos, sf::Vector2i(90, 90), "G_v01.png") {
 	hp = health;
 	setTexturePos(sf::Vector2i(235, 100));
-	
+
 }
 
 void Player::controle() {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))) {
 		speed.y = -0.1;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+	else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))) {
 		speed.y = 0.1;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+	else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))) {
 		speed.x = -0.1;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+	else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))) {
 		speed.x = 0.1;
 	}
 }
