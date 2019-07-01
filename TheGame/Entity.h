@@ -80,8 +80,6 @@ void Entity::move(float time) {
 	position.x += speed.x * time;
 	position.y += speed.y * time;
 	//std::cout << time << std::endl;
-	speed.x = 0;
-	speed.y = 0;
 	sprite.setPosition(position.x, position.y);
 }
 
@@ -175,6 +173,8 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 			}
 		}
 	}
+	speed.x = 0;
+	speed.y = 0;
 }
 
 void Player::opening_chest() {
