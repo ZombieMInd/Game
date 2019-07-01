@@ -1,52 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Entity.h"
-//#include "map.h"
-//#include "view.h"
 
 using namespace sf;
-// размер персонажа
-//const int BLOCK_SIZE = 90;
-//bool key = false;
 
-/*void interactionWithMap(Entity& player, float x, float y, float dx, float dy) {
-	float h, w;
-	h = player.getRealSize().y / 2;
-	w = player.getRealSize().x / 2;
-	y -= h;
-	x -= w;
-	float startX = x;
-	float startY = y;
-	for (int i = y / BLOCK_SIZE; i < (startY + 2 * h) / BLOCK_SIZE; i++) {
-		for (int j = x / BLOCK_SIZE; j < (startX + 2 * w) / BLOCK_SIZE; j++) {
-			//int j = (startX + w) / blcsize;
-			if (TileMap[i][j] == '0') {
-				if (dy > 0) {
-					y = i * BLOCK_SIZE - 2 * h;
-				}
-				if (dy < 0) {
-					y = (i + 1) * BLOCK_SIZE;
-				}
-				if (dx > 0) {
-					x = j * BLOCK_SIZE - 2 * w;
-				}
-				if (dx < 0) {
-					x = (j + 1) * BLOCK_SIZE;
-				}
-				player.setPosition(x + w, y + h);
-			}
-			if (TileMap[i][j] == 'b') {
-				key = true;
-				map_i = i;
-				map_j=j;
-			}
-		}
-	}
-}*/
-
-/*void opening_chest() {
-	TileMap[map_i][map_j] = 't';
-}*/
 
 int main()
 {
@@ -66,6 +23,13 @@ int main()
 	font.loadFromFile("assets/CyrilicOld.ttf");
 	Text text("", font, 32);
 
+	for (int i = 0; i < HEIGHT_MAP; i++) {
+		for (int j = 0; j < WIDTH_MAP; j++) {
+			if ((TileMap[i][j] == 'e')) {
+				entities.push_back(new Enemy(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE), 100));
+			}
+		}
+	}
 	while (window.isOpen())
 	{
 		//дл€ плавности и контрол€ игрока
@@ -83,9 +47,6 @@ int main()
 				window.close();
 		}
 
-		//sf::Vector2f v(0, 0);
-		
-		//GetPlayerCoordinateForView(v.x, v.y);
 		window.clear();
 
 		// прорисовка карты (в отдельный модуль)
@@ -109,18 +70,8 @@ int main()
 			}
 		}
 
-		//window.draw(s_map);
-		//player.controle();
-		//float dx = player.speed.x;
-		//float dy = player.speed.y;
-		//v = player.sprite.getPosition();
-		//player.move(time);
-		//v = player.sprite.getPosition();
-		//interactionWithMap(player, v.x, v.y, dx, dy);
-
 		// работа с текстом (надо ее в отдельный модуль пихнуть) 
 		// загрузка шрифта была в цикле, ай-€й-€й! нехорошо 
-		//text.setColor(sf::Color::Red);
 		text.setStyle(sf::Text::Bold | sf::Text::Underlined);
 		if (key) {
 			text.setString("Press (Z) to open this chest");
@@ -136,7 +87,13 @@ int main()
 		window.draw(text);
 		window.setView(view);
 		player.update(time, pos);
-		//player.textureRotate(pos);
+
+		for (iter = entities.begin(); iter != entities.end(); iter++) {
+			(*iter)->update(time, player.sprite.getPosition());
+			window.draw((*iter)->sprite);
+		}
+
+
 		window.draw(player.sprite);
 		window.display();
 	}

@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <vector>
+#include <list>
 #include "map.h"
 #include "view.h"
 
@@ -35,6 +37,8 @@ public:
 	virtual void update(float time, sf::Vector2f pos) = 0;
 };
 
+std::list<Entity*> entities;
+std::list<Entity*>::iterator iter;
 
 Entity::Entity(sf::Vector2f pos, sf::Vector2i s, sf::String f)
 {
@@ -185,9 +189,90 @@ class Enemy : public Entity {
 private:
 	int hp;
 public:
-	void behavior();
+	Enemy(sf::Vector2f pos, int health);
+	void update(float time, sf::Vector2f pos);
+	void behavior(sf::Vector2f playerPos);
+	void enemyInteractionWithMap(float x, float y, float dx, float dy);
 };
 
-void Enemy::behavior() {
+Enemy::Enemy(sf::Vector2f pos, int health) :
+	Entity(pos, sf::Vector2i(90, 90), "G_v01.png") {
+	hp = health;
+	setTexturePos(sf::Vector2i(235, 0));
+	void enemyInteractionWithMap(float x, float y, float dx, float dy);
+	void update(float time, sf::Vector2f pos);	
+}
 
+void Enemy::update(float time, sf::Vector2f playerPos) {
+	behavior(playerPos);
+	move(time);
+	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x, speed.y);
+	textureRotate(playerPos);
+}
+
+void Enemy::behavior(sf::Vector2f playerPos) {
+	if ((playerPos.x - sprite.getPosition().x) < 50 && 
+		(playerPos.x - sprite.getPosition().x) > 0 && 
+		(playerPos.x - sprite.getPosition().x) > (playerPos.y - sprite.getPosition().y) ||
+		(playerPos.y - sprite.getPosition().y) < 50 && 
+		(playerPos.y - sprite.getPosition().y) > 0 && 
+		(playerPos.y - sprite.getPosition().y) < (playerPos.x - sprite.getPosition().x)) {
+		speed.x = 0.25;
+	}
+	if ((playerPos.x - sprite.getPosition().x) < 50 && 
+		(playerPos.x - sprite.getPosition().x) > 0 && 
+		(playerPos.x - sprite.getPosition().x) < (playerPos.y - sprite.getPosition().y) ||
+		(playerPos.y - sprite.getPosition().y) < 50 && 
+		(playerPos.y - sprite.getPosition().y) > 0 && 
+		(playerPos.y - sprite.getPosition().y) > (playerPos.x - sprite.getPosition().x)) {
+		speed.y = 0.25;
+	}
+	if ((playerPos.x - sprite.getPosition().x) > -50 && 
+		(playerPos.x - sprite.getPosition().x) < 0 && 
+		(playerPos.x - sprite.getPosition().x) < (playerPos.y - sprite.getPosition().y) ||
+		(playerPos.y - sprite.getPosition().y) > -50 && 
+		(playerPos.y - sprite.getPosition().y) < 0 && 
+		(playerPos.y - sprite.getPosition().y) > (playerPos.x - sprite.getPosition().x)) {
+		speed.x = -0.25;
+	}
+	if ((playerPos.x - sprite.getPosition().x) > -50 && 
+		(playerPos.x - sprite.getPosition().x) < 0 && 
+		(playerPos.x - sprite.getPosition().x) > (playerPos.y - sprite.getPosition().y) ||
+		(playerPos.y - sprite.getPosition().y) > -50 && 
+		(playerPos.y - sprite.getPosition().y) < 0 && 
+		(playerPos.y - sprite.getPosition().y) < (playerPos.x - sprite.getPosition().x)) {
+		speed.y = -0.25;
+	}
+}
+
+void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
+	float h, w;
+	h = getRealSize().y / 2;
+	w = getRealSize().x / 2;
+	y -= h;
+	x -= w;
+	float startX = x;
+	float startY = y;
+	for (int i = y / BLOCK_SIZE; i < (startY + 2 * h) / BLOCK_SIZE; i++) {
+		for (int j = x / BLOCK_SIZE; j < (startX + 2 * w) / BLOCK_SIZE; j++) {
+			//int j = (startX + w) / blcsize;
+			if (TileMap[i][j] == '0') {
+				if (dy > 0) {
+					y = i * BLOCK_SIZE - 2 * h;
+				}
+				if (dy < 0) {
+					y = (i + 1) * BLOCK_SIZE;
+				}
+				if (dx > 0) {
+					x = j * BLOCK_SIZE - 2 * w;
+				}
+				if (dx < 0) {
+					x = (j + 1) * BLOCK_SIZE;
+				}
+				setPosition(x + w, y + h);
+			}
+		}
+	}
+	speed.x = 0;
+	speed.y = 0;
 }
