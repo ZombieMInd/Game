@@ -1,14 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Entity.h"
-#include "map.h"
-#include "view.h"
+//#include "map.h"
+//#include "view.h"
 
 using namespace sf;
 // размер персонажа
-const int BLOCK_SIZE = 90;
-bool key = false;
-void interactionWithMap(Player& player, float x, float y, float dx, float dy) {
+//const int BLOCK_SIZE = 90;
+//bool key = false;
+
+/*void interactionWithMap(Entity& player, float x, float y, float dx, float dy) {
 	float h, w;
 	h = player.getRealSize().y / 2;
 	w = player.getRealSize().x / 2;
@@ -41,10 +42,11 @@ void interactionWithMap(Player& player, float x, float y, float dx, float dy) {
 			}
 		}
 	}
-}
-void opening_chest() {
+}*/
+
+/*void opening_chest() {
 	TileMap[map_i][map_j] = 't';
-}
+}*/
 
 int main()
 {
@@ -60,24 +62,33 @@ int main()
 	map.loadFromImage(map_image);
 	Sprite s_map;
 	s_map.setTexture(map);
+	Font font;
+	font.loadFromFile("assets/CyrilicOld.ttf");
+	Text text("", font, 32);
+
 	while (window.isOpen())
 	{
+		//дл€ плавности и контрол€ игрока
 		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
 		time = time / 600;
-		sf::Vector2i pixelPos = sf::Mouse::getPosition(window);//
+		sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
 		sf::Vector2f pos = window.mapPixelToCoords(pixelPos);
-		//std::cout << time << std::endl;
+
+
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
-		sf::Vector2f v(0, 0);
-		v = player.sprite.getPosition();
-		GetPlayerCoordinateForView(v.x, v.y);
+
+		//sf::Vector2f v(0, 0);
+		
+		//GetPlayerCoordinateForView(v.x, v.y);
 		window.clear();
+
+		// прорисовка карты (в отдельный модуль)
 		for (int i = 0; i < HEIGHT_MAP; i++) {
 			for (int j = 0; j < WIDTH_MAP; j++) {
 				if (TileMap[i][j] == ' ') {
@@ -97,33 +108,35 @@ int main()
 				window.draw(s_map);
 			}
 		}
+
 		//window.draw(s_map);
-		player.controle();
-		float dx = player.speed.x;
-		float dy = player.speed.y;
+		//player.controle();
+		//float dx = player.speed.x;
+		//float dy = player.speed.y;
 		//v = player.sprite.getPosition();
-		player.move(time);
-		v = player.sprite.getPosition();
-		interactionWithMap(player, v.x, v.y, dx, dy);
-		Font font;
-		font.loadFromFile("assets/CyrilicOld.ttf");
-		Text text("", font, 32);
+		//player.move(time);
+		//v = player.sprite.getPosition();
+		//interactionWithMap(player, v.x, v.y, dx, dy);
+
+		// работа с текстом (надо ее в отдельный модуль пихнуть) 
+		// загрузка шрифта была в цикле, ай-€й-€й! нехорошо 
 		//text.setColor(sf::Color::Red);
 		text.setStyle(sf::Text::Bold | sf::Text::Underlined);
 		if (key) {
 			text.setString("Press (Z) to open this chest");
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-				opening_chest();
+				player.opening_chest();
 			}
 		}
 		else {
 			text.setString("");
 		}
 		key = false;
-		text.setPosition(v.x + 45, v.y);
+		text.setPosition(player.sprite.getPosition().x + 45, player.sprite.getPosition().y);
 		window.draw(text);
 		window.setView(view);
-		player.textureRotate(pos);
+		player.update(time, pos);
+		//player.textureRotate(pos);
 		window.draw(player.sprite);
 		window.display();
 	}

@@ -1,6 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "map.h"
+#include "view.h"
+
+const int BLOCK_SIZE = 90;
+bool key = false;
+
 const float PLAYER_SCALE = 0.5;
 class Entity
 {
@@ -26,6 +32,7 @@ public:
 	void setPosition(sf::Vector2f pos);
 	void setPosition(float x, float y);
 	sf::Vector2f getRealSize();
+	virtual void update(float time, sf::Vector2f pos) = 0;
 };
 
 
@@ -80,7 +87,9 @@ void Entity::move(float time) {
 
 void Entity::setPosition(sf::Vector2f pos) {
 	position = pos;
+	sprite.setPosition(pos);
 }
+
 void Entity::setPosition(float x, float y) {
 	position.x = x;
 	position.y = y;
@@ -90,6 +99,7 @@ sf::Vector2f Entity::getRealSize() {
 	return realSize;
 }
 
+
 class Player : public Entity {
 private:
 	int hp;
@@ -97,6 +107,9 @@ private:
 public:
 	Player(sf::Vector2f pos, int health);
 	void controle();
+	void update(float time, sf::Vector2f pos);
+	void interactionWithMap(float x, float y, float dx, float dy);
+	void opening_chest();
 };
 
 Player::Player(sf::Vector2f pos, int health) :
@@ -108,15 +121,73 @@ Player::Player(sf::Vector2f pos, int health) :
 
 void Player::controle() {
 	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))) {
-		speed.y = -0.1;
+		speed.y = -0.3;
 	}
 	else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))) {
-		speed.y = 0.1;
+		speed.y = 0.3;
 	}
 	else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))) {
-		speed.x = -0.1;
+		speed.x = -0.3;
 	}
 	else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))) {
-		speed.x = 0.1;
+		speed.x = 0.3;
 	}
+}
+
+void Player::update(float time, sf::Vector2f pos) {
+	GetPlayerCoordinateForView(sprite.getPosition().x, sprite.getPosition().y);
+	controle();
+	move(time);
+	interactionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x, speed.y);
+	textureRotate(pos);
+}
+
+void Player::interactionWithMap(float x, float y, float dx, float dy) {
+	float h, w;
+	h = getRealSize().y / 2;
+	w = getRealSize().x / 2;
+	y -= h;
+	x -= w;
+	float startX = x;
+	float startY = y;
+	for (int i = y / BLOCK_SIZE; i < (startY + 2 * h) / BLOCK_SIZE; i++) {
+		for (int j = x / BLOCK_SIZE; j < (startX + 2 * w) / BLOCK_SIZE; j++) {
+			//int j = (startX + w) / blcsize;
+			if (TileMap[i][j] == '0') {
+				if (dy > 0) {
+					y = i * BLOCK_SIZE - 2 * h;
+				}
+				if (dy < 0) {
+					y = (i + 1) * BLOCK_SIZE;
+				}
+				if (dx > 0) {
+					x = j * BLOCK_SIZE - 2 * w;
+				}
+				if (dx < 0) {
+					x = (j + 1) * BLOCK_SIZE;
+				}
+				setPosition(x + w, y + h);
+			}
+			if (TileMap[i][j] == 'b') {
+				key = true;
+				map_i = i;
+				map_j = j;
+			}
+		}
+	}
+}
+
+void Player::opening_chest() {
+	TileMap[map_i][map_j] = 't';
+}
+
+class Enemy : public Entity {
+private:
+	int hp;
+public:
+	void behavior();
+};
+
+void Enemy::behavior() {
+
 }
