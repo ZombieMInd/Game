@@ -6,10 +6,10 @@
 #include "map.h"
 #include "view.h"
 
-const int BLOCK_SIZE = 90;
+const int BLOCK_SIZE = 94;
 bool key = false;
 
-const float PLAYER_SCALE = 0.5;
+const float PLAYER_SCALE = 1;
 class Entity
 {
 	sf::Vector2f position;
@@ -115,9 +115,9 @@ public:
 };
 
 Player::Player(sf::Vector2f pos, int health) :
-	Entity(pos, sf::Vector2i(90, 90), "G_v01.png") {
+	Entity(pos, sf::Vector2i(44, 94), "G_v05.png") {
 	hp = health;
-	setTexturePos(sf::Vector2i(235, 100));
+	setTexturePos(sf::Vector2i(130, 0));
 
 }
 
@@ -196,9 +196,9 @@ public:
 };
 
 Enemy::Enemy(sf::Vector2f pos, int health) :
-	Entity(pos, sf::Vector2i(90, 90), "G_v01.png") {
+	Entity(pos, sf::Vector2i(154, 59), "G_v05.png") {
 	hp = health;
-	setTexturePos(sf::Vector2i(235, 0));
+	setTexturePos(sf::Vector2i(260, 265));
 	void enemyInteractionWithMap(float x, float y, float dx, float dy);
 	void update(float time, sf::Vector2f pos);	
 }
