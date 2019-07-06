@@ -6,10 +6,10 @@
 #include "map.h"
 #include "view.h"
 
-const int BLOCK_SIZE = 94;
+const int BLOCK_SIZE = 90;
 bool key = false;
 
-const float PLAYER_SCALE = 1;
+const float PLAYER_SCALE = 0.8;
 class Entity
 {
 	sf::Vector2f position;
@@ -35,6 +35,7 @@ public:
 	void setPosition(float x, float y);
 	sf::Vector2f getRealSize();
 	virtual void update(float time, sf::Vector2f pos) = 0;
+	sf::Vector2f getPos();
 };
 
 std::list<Entity*> entities;
@@ -101,10 +102,16 @@ sf::Vector2f Entity::getRealSize() {
 	return realSize;
 }
 
+sf::Vector2f Entity::getPos() {
+	return position;
+}
+
 
 class Player : public Entity {
 private:
 	int hp;
+	sf::FloatRect attackRect;
+	sf::String weapon;
 
 public:
 	Player(sf::Vector2f pos, int health);
@@ -112,6 +119,7 @@ public:
 	void update(float time, sf::Vector2f pos);
 	void interactionWithMap(float x, float y, float dx, float dy);
 	void opening_chest();
+	void setAttackRect();
 };
 
 Player::Player(sf::Vector2f pos, int health) :
@@ -133,6 +141,9 @@ void Player::controle() {
 	}
 	else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))) {
 		speed.x = 0.3;
+	}
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+
 	}
 }
 
@@ -183,6 +194,15 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 
 void Player::opening_chest() {
 	TileMap[map_i][map_j] = 't';
+	weapon = "sword";
+	sprite.setTextureRect(sf::IntRect(120, 115, 189 / 2, 249 / 2));
+	setAttackRect();
+}
+
+void Player::setAttackRect() {
+	if (weapon == "sword")
+		attackRect = sf::FloatRect(getPos().x + getRealSize().x / 2, getPos().y + getRealSize().y * 1.5,
+			getPos().x + getRealSize().x / 2 + 50, - getPos().y - getRealSize().y * 1.5);
 }
 
 class Enemy : public Entity {
