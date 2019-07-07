@@ -20,8 +20,8 @@ class Entity
 	sf::String file;
 	sf::Texture texture;
 	sf::Vector2f posOld;
-	sf::Vector2f direction;
 	float rotOld;
+	bool attacking;
 
 public:
 	sf::Vector2f speed;
@@ -36,6 +36,9 @@ public:
 	sf::Vector2f getRealSize();
 	virtual void update(float time, sf::Vector2f pos) = 0;
 	sf::Vector2f getPos();
+	bool getAttacking();
+	void setAttacking(bool isAttacking);
+	sf::FloatRect getRect();
 };
 
 std::list<Entity*> entities;
@@ -50,9 +53,9 @@ Entity::Entity(sf::Vector2f pos, sf::Vector2i s, sf::String f)
 	size = s;
 	speed = sf::Vector2f(0, 0);
 	posOld = sf::Vector2f(0, 0);
-	direction = sf::Vector2f(0, 1);
 	rotOld = 0;
 	sprite.setPosition(position.x, position.y);
+	attacking = false;
 }
 
 
@@ -75,7 +78,6 @@ void Entity::textureRotate(sf::Vector2f pos) {
 		dir.x = pos.x - position.x;
 		dir.y = pos.y - position.y;
 		float rotation = (atan2(dir.y, dir.x) * 180. / 3.14159265);
-		//std::cout << rotation << " " <<  std::endl;
 		sprite.rotate(rotation);
 	}
 }
@@ -84,7 +86,6 @@ void Entity::textureRotate(sf::Vector2f pos) {
 void Entity::move(float time) {
 	position.x += speed.x * time;
 	position.y += speed.y * time;
-	//std::cout << time << std::endl;
 	sprite.setPosition(position.x, position.y);
 }
 
@@ -106,6 +107,20 @@ sf::Vector2f Entity::getPos() {
 	return position;
 }
 
+bool Entity::getAttacking() {
+	return attacking;
+}
+
+void Entity::setAttacking(bool isAttacking) {
+	attacking = isAttacking;
+}
+
+sf::FloatRect Entity::getRect() {
+	return sf::FloatRect(position.x - realSize.x / 2, position.y - realSize.y / 2,
+		realSize.x, realSize.y);
+}
+
+//=======================================================
 
 class Player : public Entity {
 private:
@@ -126,7 +141,6 @@ Player::Player(sf::Vector2f pos, int health) :
 	Entity(pos, sf::Vector2i(44, 94), "G_v05.png") {
 	hp = health;
 	setTexturePos(sf::Vector2i(130, 0));
-
 }
 
 void Player::controle() {
@@ -143,7 +157,7 @@ void Player::controle() {
 		speed.x = 0.3;
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-
+		setAttacking(true);
 	}
 }
 
@@ -153,6 +167,15 @@ void Player::update(float time, sf::Vector2f pos) {
 	move(time);
 	interactionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x, speed.y);
 	textureRotate(pos);
+	if (getAttacking()) {
+		for (auto ent : entities) {
+			if (ent->getRect().intersects(getRect()))
+				//std::cout << getRect().left << " " << getRect().top << " " << 
+				//getRect().height << " " << getRect().width << std::endl;
+				;
+		}
+		setAttacking(false);
+	}
 }
 
 void Player::interactionWithMap(float x, float y, float dx, float dy) {
@@ -165,7 +188,6 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 	float startY = y;
 	for (int i = y / BLOCK_SIZE; i < (startY + 2 * h) / BLOCK_SIZE; i++) {
 		for (int j = x / BLOCK_SIZE; j < (startX + 2 * w) / BLOCK_SIZE; j++) {
-			//int j = (startX + w) / blcsize;
 			if (TileMap[i][j] == '0') {
 				if (dy > 0) {
 					y = i * BLOCK_SIZE - 2 * h;
