@@ -120,7 +120,7 @@ sf::FloatRect Entity::getRect() {
 		realSize.x, realSize.y);
 }
 
-//=======================================================
+//PLAYER CLASS=======================================================
 
 class Player : public Entity {
 private:
@@ -227,6 +227,7 @@ void Player::setAttackRect() {
 			getPos().x + getRealSize().x / 2 + 50, - getPos().y - getRealSize().y * 1.5);
 }
 
+//ENEMY CLASS==========================================
 class Enemy : public Entity {
 private:
 	int hp;
@@ -297,7 +298,6 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 	float startY = y;
 	for (int i = y / BLOCK_SIZE; i < (startY + 2 * h) / BLOCK_SIZE; i++) {
 		for (int j = x / BLOCK_SIZE; j < (startX + 2 * w) / BLOCK_SIZE; j++) {
-			//int j = (startX + w) / blcsize;
 			if (TileMap[i][j] == '0') {
 				if (dy > 0) {
 					y = i * BLOCK_SIZE - 2 * h;
