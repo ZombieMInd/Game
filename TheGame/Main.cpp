@@ -86,14 +86,23 @@ int main()
 		text.setPosition(player.sprite.getPosition().x + 45, player.sprite.getPosition().y);
 		window.draw(text);
 		window.setView(view);
+		
 		player.update(time, pos);
 
-		for (iter = entities.begin(); iter != entities.end(); iter++) {
-			(*iter)->update(time, player.sprite.getPosition());
-			window.draw((*iter)->sprite);
+		for (iter = entities.begin(); iter != entities.end();) {
+			Entity *ent = *iter;
+			ent->update(time, player.sprite.getPosition());
+			if (ent->getHP() <= 0) {
+				iter = entities.erase(iter); 
+				delete ent;
+			}
+			else iter++;
 		}
 
-
+		for (auto ent : entities) {
+			window.draw(ent->sprite);
+		}
+		
 		window.draw(player.sprite);
 		window.display();
 	}

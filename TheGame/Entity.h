@@ -39,6 +39,8 @@ public:
 	bool getAttacking();
 	void setAttacking(bool isAttacking);
 	sf::FloatRect getRect();
+	virtual void getDamage(int damage) = 0;
+	virtual int getHP() = 0;
 };
 
 std::list<Entity*> entities;
@@ -135,6 +137,8 @@ public:
 	void interactionWithMap(float x, float y, float dx, float dy);
 	void opening_chest();
 	void setAttackRect();
+	void getDamage(int damage);
+	int getHP();
 };
 
 Player::Player(sf::Vector2f pos, int health) :
@@ -172,7 +176,7 @@ void Player::update(float time, sf::Vector2f pos) {
 			if (ent->getRect().intersects(getRect()))
 				//std::cout << getRect().left << " " << getRect().top << " " << 
 				//getRect().height << " " << getRect().width << std::endl;
-				;
+				ent->getDamage(10);
 		}
 		setAttacking(false);
 	}
@@ -227,6 +231,15 @@ void Player::setAttackRect() {
 			getPos().x + getRealSize().x / 2 + 50, - getPos().y - getRealSize().y * 1.5);
 }
 
+void Player::getDamage(int damage) {
+	hp -= damage;
+	sprite.setColor(sf::Color(255, 0, 0, 100));
+}
+
+int Player::getHP() {
+	return hp;
+}
+
 //ENEMY CLASS==========================================
 class Enemy : public Entity {
 private:
@@ -236,6 +249,8 @@ public:
 	void update(float time, sf::Vector2f pos);
 	void behavior(sf::Vector2f playerPos);
 	void enemyInteractionWithMap(float x, float y, float dx, float dy);
+	void getDamage(int damage);
+	int getHP();
 };
 
 Enemy::Enemy(sf::Vector2f pos, int health) :
@@ -251,6 +266,8 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 	move(time);
 	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x, speed.y);
 	textureRotate(playerPos);
+	sprite.setColor(sf::Color(0, 0, 0, 255));
+	
 }
 
 void Enemy::behavior(sf::Vector2f playerPos) {
@@ -317,4 +334,13 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 	}
 	speed.x = 0;
 	speed.y = 0;
+}
+
+void Enemy::getDamage(int damage) {
+	hp -= damage;
+	sprite.setColor(sf::Color(255, 0, 0, 100));
+}
+
+int Enemy::getHP() {
+	return hp;
 }
