@@ -171,9 +171,10 @@ void Player::update(float time, sf::Vector2f pos) {
 	move(time);
 	interactionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x, speed.y);
 	textureRotate(pos);
+	setAttackRect();
 	if (getAttacking()) {
 		for (auto ent : entities) {
-			if (ent->getRect().intersects(getRect()))
+			if (ent->getRect().intersects(attackRect))
 				//std::cout << getRect().left << " " << getRect().top << " " << 
 				//getRect().height << " " << getRect().width << std::endl;
 				ent->getDamage(10);
@@ -222,13 +223,12 @@ void Player::opening_chest() {
 	TileMap[map_i][map_j] = 't';
 	weapon = "sword";
 	sprite.setTextureRect(sf::IntRect(120, 115, 189 / 2, 249 / 2));
-	setAttackRect();
 }
 
 void Player::setAttackRect() {
 	if (weapon == "sword")
 		attackRect = sf::FloatRect(getPos().x + getRealSize().x / 2, getPos().y + getRealSize().y * 1.5,
-			getPos().x + getRealSize().x / 2 + 50, - getPos().y - getRealSize().y * 1.5);
+			getRealSize().x / 2 + 50,- getRealSize().y * 1.5);
 }
 
 void Player::getDamage(int damage) {
@@ -266,7 +266,7 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 	move(time);
 	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x, speed.y);
 	textureRotate(playerPos);
-	sprite.setColor(sf::Color(0, 0, 0, 255));
+	sprite.setColor(sf::Color(255, 255, 255, 255));
 	
 }
 
@@ -339,6 +339,7 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 void Enemy::getDamage(int damage) {
 	hp -= damage;
 	sprite.setColor(sf::Color(255, 0, 0, 100));
+	std::cout << damage << std::endl;
 }
 
 int Enemy::getHP() {
