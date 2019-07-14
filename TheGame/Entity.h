@@ -41,6 +41,7 @@ public:
 	sf::FloatRect getRect();
 	virtual void getDamage(int damage) = 0;
 	virtual int getHP() = 0;
+	float getAngel(sf::Vector2f pos);
 };
 
 std::list<Entity*> entities;
@@ -74,12 +75,10 @@ void Entity::setTexturePos(sf::Vector2i pos) {
 }
 
 void Entity::textureRotate(sf::Vector2f pos) {
-	sf::Vector2f dir;
+
 	if (abs(pos.x - posOld.x) > 0.005 || abs(pos.y - posOld.y) > 0.005) {
 		sprite.setRotation(0);
-		dir.x = pos.x - position.x;
-		dir.y = pos.y - position.y;
-		float rotation = (atan2(dir.y, dir.x) * 180. / 3.14159265);
+		float rotation = getAngel(pos);
 		sprite.rotate(rotation);
 	}
 }
@@ -122,6 +121,13 @@ sf::FloatRect Entity::getRect() {
 		realSize.x, realSize.y);
 }
 
+float Entity::getAngel(sf::Vector2f pos) {
+	sf::Vector2f dir;
+	dir.x = pos.x - position.x;
+	dir.y = pos.y - position.y;
+	return (atan2(dir.y, dir.x) * 180. / 3.14159265);
+}
+
 //PLAYER CLASS=======================================================
 
 class Player : public Entity {
@@ -129,6 +135,8 @@ private:
 	int hp;
 	sf::FloatRect attackRect;
 	sf::String weapon;
+	sf::Clock attackTimer; //таймер засекающий время между ударами
+	int attackSpeed; //кол-во микросек до следующего удара
 
 public:
 	Player(sf::Vector2f pos, int health);
@@ -145,6 +153,7 @@ Player::Player(sf::Vector2f pos, int health) :
 	Entity(pos, sf::Vector2i(44, 94), "G_v05.png") {
 	hp = health;
 	setTexturePos(sf::Vector2i(130, 0));
+	attackSpeed = 600;
 }
 
 void Player::controle() {
@@ -161,7 +170,12 @@ void Player::controle() {
 		speed.x = 0.3;
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		setAttacking(true);
+		float timePassed = attackTimer.getElapsedTime().asMilliseconds();
+		if (timePassed >= attackSpeed) {
+			setAttacking(true);
+			attackTimer.restart();
+			//std::cout << getAngel(sf::Vector2f(1000, 1000)) << std::endl;
+		}
 	}
 }
 
