@@ -22,6 +22,7 @@ class Entity
 	sf::Vector2f posOld;
 	float rotOld;
 	bool attacking;
+	float dir;//угол поворота
 
 public:
 	sf::Vector2f speed;
@@ -42,6 +43,8 @@ public:
 	virtual void getDamage(int damage) = 0;
 	virtual int getHP() = 0;
 	float getAngel(sf::Vector2f pos);
+	float distanceTo(sf::Vector2f pos);
+	float getDir();
 };
 
 std::list<Entity*> entities;
@@ -80,6 +83,7 @@ void Entity::textureRotate(sf::Vector2f pos) {
 		sprite.setRotation(0);
 		float rotation = getAngel(pos);
 		sprite.rotate(rotation);
+		dir = rotation;
 	}
 }
 
@@ -128,15 +132,26 @@ float Entity::getAngel(sf::Vector2f pos) {
 	return (atan2(dir.y, dir.x) * 180. / 3.14159265);
 }
 
+float Entity::distanceTo(sf::Vector2f pos) {
+	sf::Vector2f dir;
+	dir.x = pos.x - position.x;
+	dir.y = pos.y - position.y;
+	return sqrtf(dir.x * dir.x + dir.y * dir.y);
+}
+
+float Entity::getDir() {
+	return dir;
+}
+
 //PLAYER CLASS=======================================================
 
 class Player : public Entity {
 private:
 	int hp;
-	sf::FloatRect attackRect;
+	sf::Vector2f attackCircle;//первая координата - r радиус поражения, вторая fi - угол поражения
 	sf::String weapon;
 	sf::Clock attackTimer; //таймер засекающий время между ударами
-	int attackSpeed; //кол-во микросек до следующего удара
+	int attackSpeed; //кол-во милсек до следующего удара
 
 public:
 	Player(sf::Vector2f pos, int health);
@@ -144,7 +159,7 @@ public:
 	void update(float time, sf::Vector2f pos);
 	void interactionWithMap(float x, float y, float dx, float dy);
 	void opening_chest();
-	void setAttackRect();
+	void setAttackCircle();
 	void getDamage(int damage);
 	int getHP();
 };
@@ -154,6 +169,7 @@ Player::Player(sf::Vector2f pos, int health) :
 	hp = health;
 	setTexturePos(sf::Vector2i(130, 0));
 	attackSpeed = 600;
+	attackCircle = sf::Vector2f(0, 0);
 }
 
 void Player::controle() {
@@ -174,7 +190,7 @@ void Player::controle() {
 		if (timePassed >= attackSpeed) {
 			setAttacking(true);
 			attackTimer.restart();
-			//std::cout << getAngel(sf::Vector2f(1000, 1000)) << std::endl;
+			std::cout << getAngel(sf::Vector2f(1000, 1000)) << " " << distanceTo(sf::Vector2f(1000, 1000)) << std::endl;
 		}
 	}
 }
@@ -185,10 +201,12 @@ void Player::update(float time, sf::Vector2f pos) {
 	move(time);
 	interactionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x, speed.y);
 	textureRotate(pos);
-	setAttackRect();
+	setAttackCircle();
 	if (getAttacking()) {
 		for (auto ent : entities) {
-			if (ent->getRect().intersects(attackRect))
+			if (distanceTo(ent->getPos()) <= attackCircle.x &&
+				getAngel(ent->getPos()) < getDir() + attackCircle.y && 
+				getAngel(ent->getPos()) > getDir() - attackCircle.y)
 				//std::cout << getRect().left << " " << getRect().top << " " << 
 				//getRect().height << " " << getRect().width << std::endl;
 				ent->getDamage(10);
@@ -239,10 +257,9 @@ void Player::opening_chest() {
 	sprite.setTextureRect(sf::IntRect(120, 115, 189 / 2, 249 / 2));
 }
 
-void Player::setAttackRect() {
+void Player::setAttackCircle() {
 	if (weapon == "sword")
-		attackRect = sf::FloatRect(getPos().x + getRealSize().x / 2, getPos().y + getRealSize().y * 1.5,
-			getRealSize().x / 2 + 50,- getRealSize().y * 1.5);
+		attackCircle = sf::Vector2f(150, 60);
 }
 
 void Player::getDamage(int damage) {
