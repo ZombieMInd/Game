@@ -27,9 +27,10 @@ class Entity
 public:
 	sf::Vector2f speed;
 	sf::Sprite sprite;
-	Entity(sf::Vector2f pos, sf::Vector2i s, sf::String f);
+	Entity(sf::Vector2f pos, sf::Vector2f s, sf::String f);
 	~Entity();
-	void setTexturePos(sf::Vector2i pos);
+	void setTexturePos(sf::Vector2i pos, sf::Vector2i size);
+	void setTextureForAnimation(sf::Vector2i pos, sf::Vector2i size);
 	void textureRotate(sf::Vector2f pos);
 	void move(float time);
 	void setPosition(sf::Vector2f pos);
@@ -51,13 +52,13 @@ public:
 std::list<Entity*> entities;
 std::list<Entity*>::iterator iter;
 
-Entity::Entity(sf::Vector2f pos, sf::Vector2i s, sf::String f)
+Entity::Entity(sf::Vector2f pos, sf::Vector2f s, sf::String f)
 {
 	file = f;
 	texture.loadFromFile("assets/" + file);
 	sprite.setTexture(texture);
 	position = pos;
-	size = s;
+	realSize = s;
 	speed = sf::Vector2f(0, 0);
 	posOld = sf::Vector2f(0, 0);
 	rotOld = 0;
@@ -70,12 +71,16 @@ Entity::~Entity()
 {
 }
 
-void Entity::setTexturePos(sf::Vector2i pos) {
+void Entity::setTexturePos(sf::Vector2i pos, sf::Vector2i size) {
 	sprite.setTextureRect(sf::IntRect(pos.x, pos.y, size.x, size.y));
 	sprite.scale(sf::Vector2f(PLAYER_SCALE, PLAYER_SCALE));
-	realSize.x = size.x*PLAYER_SCALE;
-	realSize.y = size.y*PLAYER_SCALE;
+	//realSize.x = size.x*PLAYER_SCALE;
+	//realSize.y = size.y*PLAYER_SCALE;
 	sprite.setOrigin(size.x / 2, size.y / 2);
+}
+
+void Entity::setTextureForAnimation(sf::Vector2i pos, sf::Vector2i size) {
+	sprite.setTextureRect(sf::IntRect(pos.x, pos.y, size.x, size.y));
 }
 
 void Entity::textureRotate(sf::Vector2f pos) {
@@ -157,6 +162,7 @@ private:
 	sf::String weapon;
 	sf::Clock attackTimer; //таймер засекающий время между ударами
 	int attackSpeed; //кол-во милсек до следующего удара
+	int animationFrame;
 
 public:
 	Player(sf::Vector2f pos, int health);
@@ -167,28 +173,30 @@ public:
 	void setAttackCircle();
 	void getDamage(int damage);
 	int getHP();
+	void attackAnimation();
 };
 
 Player::Player(sf::Vector2f pos, int health) :
-	Entity(pos, sf::Vector2i(137, 254), "PersNew.png") {
+	Entity(pos, sf::Vector2f(45, 45), "PersNew.png") {
 	hp = health;
-	setTexturePos(sf::Vector2i(100, 100));
+	setTexturePos(sf::Vector2i(0, 0), sf::Vector2i(137, 254));
 	setOrigin(25, 132);
 	attackSpeed = 600;
 	attackCircle = sf::Vector2f(0, 0);
+	animationFrame = 0;
 }
 
 void Player::controle() {
 	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))) {
 		speed.y = -0.3;
 	}
-	else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))) {
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))) {
 		speed.y = 0.3;
 	}
-	else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))) {
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))) {
 		speed.x = -0.3;
 	}
-	else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))) {
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))) {
 		speed.x = 0.3;
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -204,6 +212,7 @@ void Player::controle() {
 void Player::update(float time, sf::Vector2f pos) {
 	GetPlayerCoordinateForView(sprite.getPosition().x, sprite.getPosition().y);
 	controle();
+	attackAnimation();
 	move(time);
 	interactionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x, speed.y);
 	textureRotate(pos);
@@ -277,6 +286,34 @@ int Player::getHP() {
 	return hp;
 }
 
+void Player::attackAnimation() {
+	if (attackTimer.getElapsedTime().asMilliseconds() < 10) {
+		animationFrame = 1;
+		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
+	}
+	if (attackTimer.getElapsedTime().asMilliseconds() > 50 && 
+		attackTimer.getElapsedTime().asMilliseconds() < 100) {
+		animationFrame = 2;
+		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
+	}
+	if (attackTimer.getElapsedTime().asMilliseconds() > 100 &&
+		attackTimer.getElapsedTime().asMilliseconds() < 200) {
+		animationFrame = 3;
+		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
+	}
+	if (attackTimer.getElapsedTime().asMilliseconds() > 200 &&
+		attackTimer.getElapsedTime().asMilliseconds() < 250) {
+		animationFrame = 4;
+		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
+	}
+	if (attackTimer.getElapsedTime().asMilliseconds() > 250) {
+		animationFrame = 0;
+		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
+	}
+	//std::cout << attackTimer.getElapsedTime().asMilliseconds() << std::endl;
+	
+}
+
 //ENEMY CLASS==========================================
 class Enemy : public Entity {
 private:
@@ -293,9 +330,9 @@ public:
 };
 
 Enemy::Enemy(sf::Vector2f pos, int health) :
-	Entity(pos, sf::Vector2i(154, 59), "G_v05.png") {
+	Entity(pos, sf::Vector2f(154, 59), "G_v05.png") {
 	hp = health;
-	setTexturePos(sf::Vector2i(260, 265));
+	setTexturePos(sf::Vector2i(260, 265), sf::Vector2i(154, 59));
 	void enemyInteractionWithMap(float x, float y, float dx, float dy);
 	void update(float time, sf::Vector2f pos);	
 }
@@ -315,8 +352,8 @@ void Enemy::behavior(sf::Vector2f playerPos) {
 		speed.x = cos((int)getAngel(playerPos)) / 100;
 		speed.y = sin((int)getAngel(playerPos)) / 100;
 		//std::cout << getAngel(playerPos) / 6 << std::endl;
-		std::cout << cos((int)getAngel(playerPos)) / 6 << std::endl;
-		std::cout << sin((int)getAngel(playerPos)) / 6 << std::endl << std::endl;
+		//std::cout << cos((int)getAngel(playerPos)) / 6 << std::endl;
+		//std::cout << sin((int)getAngel(playerPos)) / 6 << std::endl << std::endl;
 		behaviorTimer.restart();
 	}
 	/*if ((playerPos.x - sprite.getPosition().x) < 50 &&

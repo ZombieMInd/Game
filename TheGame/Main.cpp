@@ -12,7 +12,7 @@ int main()
 
 	float CurrentFrame = 0;
 	sf::Clock clock;
-	Player player(sf::Vector2f(150, 150), 100);
+	Player player(sf::Vector2f(200, 200), 100);
 	Image map_image;
 	map_image.loadFromFile("assets/G_v05.png");
 	Texture map;
