@@ -23,7 +23,7 @@ class Entity
 	float rotOld;
 	bool attacking;
 	float dir;//угол поворота
-
+	float acceleration;//ускорение для более плавной физики 
 public:
 	sf::Vector2f speed;
 	sf::Sprite sprite;
@@ -45,6 +45,7 @@ public:
 	float getAngel(sf::Vector2f pos);
 	float distanceTo(sf::Vector2f pos);
 	float getDir();
+	void setOrigin(float x, float y);
 };
 
 std::list<Entity*> entities;
@@ -143,6 +144,10 @@ float Entity::getDir() {
 	return dir;
 }
 
+void Entity::setOrigin(float x, float y) {
+	sprite.setOrigin(x, y);
+}
+
 //PLAYER CLASS=======================================================
 
 class Player : public Entity {
@@ -165,9 +170,10 @@ public:
 };
 
 Player::Player(sf::Vector2f pos, int health) :
-	Entity(pos, sf::Vector2i(44, 94), "G_v05.png") {
+	Entity(pos, sf::Vector2i(137, 254), "PersNew.png") {
 	hp = health;
-	setTexturePos(sf::Vector2i(130, 0));
+	setTexturePos(sf::Vector2i(100, 100));
+	setOrigin(25, 132);
 	attackSpeed = 600;
 	attackCircle = sf::Vector2f(0, 0);
 }
@@ -275,6 +281,8 @@ int Player::getHP() {
 class Enemy : public Entity {
 private:
 	int hp;
+	sf::Clock attackTimer;
+	sf::Clock  behaviorTimer;
 public:
 	Enemy(sf::Vector2f pos, int health);
 	void update(float time, sf::Vector2f pos);
@@ -302,11 +310,20 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 }
 
 void Enemy::behavior(sf::Vector2f playerPos) {
-	if ((playerPos.x - sprite.getPosition().x) < 50 && 
+	float time = behaviorTimer.getElapsedTime().asMilliseconds();
+	if (distanceTo(playerPos) <= 500 && time > 100) {
+		speed.x = cos((int)getAngel(playerPos)) / 100;
+		speed.y = sin((int)getAngel(playerPos)) / 100;
+		//std::cout << getAngel(playerPos) / 6 << std::endl;
+		std::cout << cos((int)getAngel(playerPos)) / 6 << std::endl;
+		std::cout << sin((int)getAngel(playerPos)) / 6 << std::endl << std::endl;
+		behaviorTimer.restart();
+	}
+	/*if ((playerPos.x - sprite.getPosition().x) < 50 &&
 		(playerPos.x - sprite.getPosition().x) > 0 && 
 		(playerPos.x - sprite.getPosition().x) > (playerPos.y - sprite.getPosition().y) ||
-		(playerPos.y - sprite.getPosition().y) < 50 && 
-		(playerPos.y - sprite.getPosition().y) > 0 && 
+		(playerPos.y - sprite.getPosition().y) < 50 &&
+		(playerPos.y - sprite.getPosition().y) > 0 &&
 		(playerPos.y - sprite.getPosition().y) < (playerPos.x - sprite.getPosition().x)) {
 		speed.x = 0.25;
 	}
@@ -333,6 +350,15 @@ void Enemy::behavior(sf::Vector2f playerPos) {
 		(playerPos.y - sprite.getPosition().y) < 0 && 
 		(playerPos.y - sprite.getPosition().y) < (playerPos.x - sprite.getPosition().x)) {
 		speed.y = -0.25;
+	}*/
+
+	if (distanceTo(playerPos) <= 200) {
+		float time = behaviorTimer.restart().asMilliseconds();
+		if (time > 2500) {
+			speed.x *= 4;
+			speed.y *= 4;
+			
+		}
 	}
 }
 
@@ -363,8 +389,6 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 			}
 		}
 	}
-	speed.x = 0;
-	speed.y = 0;
 }
 
 void Enemy::getDamage(int damage) {
