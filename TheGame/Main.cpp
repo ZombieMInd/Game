@@ -64,14 +64,11 @@ int main()
 				if ((TileMap[i][j] == '0')) {
 					s_map.setTextureRect(IntRect(0, 115, 94, 209));
 				}
-				//s_map.scale(sf::Vector2f(0.112, 0.112));
 				s_map.setPosition(j * 90, i * 90);
 				window.draw(s_map);
 			}
 		}
 
-		// работа с текстом (надо ее в отдельный модуль пихнуть) 
-		// загрузка шрифта была в цикле, ай-€й-€й! нехорошо 
 		text.setStyle(sf::Text::Bold | sf::Text::Underlined);
 		if (key) {
 			text.setString("Press (Z) to open this chest");
