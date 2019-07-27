@@ -74,8 +74,6 @@ Entity::~Entity()
 void Entity::setTexturePos(sf::Vector2i pos, sf::Vector2i size) {
 	sprite.setTextureRect(sf::IntRect(pos.x, pos.y, size.x, size.y));
 	sprite.scale(sf::Vector2f(PLAYER_SCALE, PLAYER_SCALE));
-	//realSize.x = size.x*PLAYER_SCALE;
-	//realSize.y = size.y*PLAYER_SCALE;
 	sprite.setOrigin(size.x / 2, size.y / 2);
 }
 
@@ -204,6 +202,7 @@ void Player::controle() {
 		if (timePassed >= attackSpeed) {
 			setAttacking(true);
 			attackTimer.restart();
+			//
 			std::cout << getAngel(sf::Vector2f(1000, 1000)) << " " << distanceTo(sf::Vector2f(1000, 1000)) << std::endl;
 		}
 	}
@@ -241,8 +240,9 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 	float newX;
 	float oldX = x - dx;
 	float oldY = y - dy;
+	int j = dx <= 0 ? x / BLOCK_SIZE : (startX + 2 * w) / BLOCK_SIZE;
 	if (dx != 0) {
-		int j = dx <= 0 ? x / BLOCK_SIZE : (startX + 2 * w) / BLOCK_SIZE;
+		//int j = dx <= 0 ? x / BLOCK_SIZE : (startX + 2 * w) / BLOCK_SIZE;
 		for (int i = y / BLOCK_SIZE; i < (startY + 2 * h) / BLOCK_SIZE; i++) {
 			if (TileMap[i][j] == '0') {
 				if (dx > 0 && TileMap[i][j - 1] != '0' && oldX <= j * BLOCK_SIZE - 2 * w) {
@@ -257,8 +257,9 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 		}
 		setPosition(x + w, y + h);
 	}
+	int i = dy <= 0 ? y / BLOCK_SIZE : (startY + 2 * h) / BLOCK_SIZE;
 	if (dy != 0) {
-		int i = dy <= 0 ? y / BLOCK_SIZE : (startY + 2 * h) / BLOCK_SIZE;
+		//int i = dy <= 0 ? y / BLOCK_SIZE : (startY + 2 * h) / BLOCK_SIZE;
 		for (int j = x / BLOCK_SIZE; j < (startX + 2 * w) / BLOCK_SIZE; j++) {
 			if (TileMap[i][j] == '0') {
 				if (dy > 0 && TileMap[i - 1][j] != '0' && oldY <= i * BLOCK_SIZE - 2 * h) {
@@ -273,7 +274,11 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 		}
 		setPosition(x + w, y + h);
 	}
-
+	if (TileMap[i][j] == 'b') {
+		key = true;
+		map_i = i;
+		map_j = j;
+	}
 	speed.x = 0;
 	speed.y = 0;
 }
@@ -281,7 +286,7 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 void Player::opening_chest() {
 	TileMap[map_i][map_j] = 't';
 	weapon = "sword";
-	sprite.setTextureRect(sf::IntRect(120, 115, 189 / 2, 249 / 2));
+	sprite.setTextureRect(sf::IntRect(0, 365, 90, 455));
 }
 
 void Player::setAttackCircle() {
@@ -355,58 +360,25 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
 	textureRotate(playerPos);
 	sprite.setColor(sf::Color(255, 255, 255, 255));
-	
 }
 
 void Enemy::behavior(sf::Vector2f playerPos) {
 	float time = behaviorTimer.getElapsedTime().asMilliseconds();
+
 	if (distanceTo(playerPos) <= 500 && time > 100) {
-		speed.x = cos((int)getAngel(playerPos)) / 100;
-		speed.y = sin((int)getAngel(playerPos)) / 100;
+		speed.x = cos((int)getAngel(playerPos)) * 10;
+		speed.y = sin((int)getAngel(playerPos)) * 10;
 		//std::cout << getAngel(playerPos) / 6 << std::endl;
 		//std::cout << cos((int)getAngel(playerPos)) / 6 << std::endl;
 		//std::cout << sin((int)getAngel(playerPos)) / 6 << std::endl << std::endl;
 		behaviorTimer.restart();
 	}
-	/*if ((playerPos.x - sprite.getPosition().x) < 50 &&
-		(playerPos.x - sprite.getPosition().x) > 0 && 
-		(playerPos.x - sprite.getPosition().x) > (playerPos.y - sprite.getPosition().y) ||
-		(playerPos.y - sprite.getPosition().y) < 50 &&
-		(playerPos.y - sprite.getPosition().y) > 0 &&
-		(playerPos.y - sprite.getPosition().y) < (playerPos.x - sprite.getPosition().x)) {
-		speed.x = 0.25;
-	}
-	if ((playerPos.x - sprite.getPosition().x) < 50 && 
-		(playerPos.x - sprite.getPosition().x) > 0 && 
-		(playerPos.x - sprite.getPosition().x) < (playerPos.y - sprite.getPosition().y) ||
-		(playerPos.y - sprite.getPosition().y) < 50 && 
-		(playerPos.y - sprite.getPosition().y) > 0 && 
-		(playerPos.y - sprite.getPosition().y) > (playerPos.x - sprite.getPosition().x)) {
-		speed.y = 0.25;
-	}
-	if ((playerPos.x - sprite.getPosition().x) > -50 && 
-		(playerPos.x - sprite.getPosition().x) < 0 && 
-		(playerPos.x - sprite.getPosition().x) < (playerPos.y - sprite.getPosition().y) ||
-		(playerPos.y - sprite.getPosition().y) > -50 && 
-		(playerPos.y - sprite.getPosition().y) < 0 && 
-		(playerPos.y - sprite.getPosition().y) > (playerPos.x - sprite.getPosition().x)) {
-		speed.x = -0.25;
-	}
-	if ((playerPos.x - sprite.getPosition().x) > -50 && 
-		(playerPos.x - sprite.getPosition().x) < 0 && 
-		(playerPos.x - sprite.getPosition().x) > (playerPos.y - sprite.getPosition().y) ||
-		(playerPos.y - sprite.getPosition().y) > -50 && 
-		(playerPos.y - sprite.getPosition().y) < 0 && 
-		(playerPos.y - sprite.getPosition().y) < (playerPos.x - sprite.getPosition().x)) {
-		speed.y = -0.25;
-	}*/
 
 	if (distanceTo(playerPos) <= 200) {
 		float time = behaviorTimer.restart().asMilliseconds();
 		if (time > 2500) {
 			speed.x *= 4;
-			speed.y *= 4;
-			
+			speed.y *= 4;	
 		}
 	}
 }
@@ -454,7 +426,6 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 		}
 		setPosition(x + w, y + h);
 	}
-
 	speed.x = 0;
 	speed.y = 0;
 }
