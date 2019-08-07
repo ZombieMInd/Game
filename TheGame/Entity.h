@@ -45,6 +45,7 @@ public:
 	virtual void getDamage(int damage) = 0;
 	virtual int getHP() = 0;
 	float getAngel(sf::Vector2f pos);
+	sf::Vector2f getSpeed(sf::Vector2f pos);
 	float distanceTo(sf::Vector2f pos);
 	float getDir();
 	void setOrigin(float x, float y);
@@ -86,7 +87,7 @@ void Entity::textureRotate(sf::Vector2f pos) {
 
 	if (abs(pos.x - posOld.x) > 0.005 || abs(pos.y - posOld.y) > 0.005) {
 		sprite.setRotation(0);
-		float rotation = getAngel(pos);
+		float rotation = (getAngel(pos)*180./ 3.14159265);
 		sprite.rotate(rotation);
 		dir = rotation;
 	}
@@ -135,6 +136,17 @@ float Entity::getAngel(sf::Vector2f pos) {
 	dir.x = pos.x - position.x;
 	dir.y = pos.y - position.y;
 	return (atan2(dir.y, dir.x) /** 180. / 3.14159265*/);
+}
+
+sf::Vector2f Entity::getSpeed(sf::Vector2f pos) {
+	sf::Vector2f dir;
+	dir.x = pos.x - position.x;
+	dir.y = pos.y - position.y;
+	float hyp = sqrt(dir.x*dir.x + dir.y*dir.y);
+	sf::Vector2f res;
+	res.x = dir.x / hyp;
+	res.y = dir.y / hyp;
+	return res;
 }
 
 float Entity::distanceTo(sf::Vector2f pos) {
@@ -357,7 +369,7 @@ Enemy::Enemy(sf::Vector2f pos, int health) :
 
 void Enemy::update(float time, sf::Vector2f playerPos) {
 	behavior(playerPos);
-	move(15);
+	move(50);
 	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
 	textureRotate(playerPos);
 	sprite.setColor(sf::Color(255, 255, 255, 255));
@@ -365,32 +377,26 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 
 void Enemy::behavior(sf::Vector2f playerPos) {
 	float time = behaviorTimer.getElapsedTime().asMilliseconds();
-	if (distanceTo(playerPos) <= 500 && time > 200) {
-		speed.x = floor(cos((int)getAngel(playerPos))*1000) / 1000;
-		speed.y = floor(sin((int)getAngel(playerPos))*1000) / 1000;
-		std::cout << "distance " << distanceTo(playerPos) << std::endl;
- 		std::cout << "speed " << speed.x << "  " << speed.y << std::endl;
-		//std::cout << getAngel(playerPos) / 6 << std::endl;
-		//std::cout << cos((int)getAngel(playerPos)) / 6 << std::endl; 
-		//std::cout << sin((int)getAngel(playerPos)) / 6 << std::endl << std::endl;
-		behaviorTimer.restart();
+	if (distanceTo(playerPos) <= 500 && distanceTo(playerPos) > 200) {
+		if (time > 100) {
+			speed = getSpeed(playerPos);
+			/*std::cout << "distance " << distanceTo(playerPos) << std::endl;
+			std::cout << "speed " << speed.x << "  " << speed.y << std::endl;*/
+			behaviorTimer.restart();
+		}
 	}
-	else if (distanceTo(playerPos) <= 200) {
-		float time = behaviorTimer.restart().asMilliseconds();
-		//if (time > 250) {
-		speed.x = floor(cos((int)getAngel(playerPos)) * 1000) / 750;
-		speed.y = floor(sin((int)getAngel(playerPos)) * 1000) / 750;
-		std::cout << "distance2222 " << distanceTo(playerPos) << std::endl;
-		std::cout << "time 2222" << time << std::endl;
-		std::cout << "speed " << speed.x << "  " << speed.y << std::endl;
-		//}
-		behaviorTimer.restart();
+	else if (distanceTo(playerPos) <= 200 && distanceTo(playerPos) > 70) {
+		//float time = behaviorTimer.restart().asMilliseconds();
+		speed = getSpeed(playerPos);
+			/*std::cout << "distance2222 " << distanceTo(playerPos) << std::endl;
+			std::cout << "time 2222" << time << std::endl;
+			std::cout << "speed " << speed.x << "  " << speed.y << std::endl;*/
+		//behaviorTimer.restart();
 	}
-	else if (distanceTo(playerPos) <= 30) {	
-		std::cout << "LASTD " << distanceTo(playerPos)  << std::endl;
+	else if (distanceTo(playerPos) <= 70) {	
+		//std::cout << "LASTD " << distanceTo(playerPos)  << std::endl;
 		speed.x = 0;
 		speed.y = 0;
-		//}
 	}
 }
 
