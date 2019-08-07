@@ -4,25 +4,7 @@
 
 using namespace sf;
 
-//void draw_map(Sprite* s_map) {
-//	for (int i = 0; i < HEIGHT_MAP; i++) {
-//		for (int j = 0; j < WIDTH_MAP; j++) {
-//			if (TileMap[i][j] == ' ') {
-//				s_map.setTextureRect(IntRect(0, 0, 94, 94));
-//			}
-//			if (TileMap[i][j] == 'b') {
-//				s_map.setTextureRect(IntRect(0, 255, 94, 349));
-//			}
-//			if (TileMap[i][j] == 't') {
-//				s_map.setTextureRect(IntRect(0, 365, 94, 459));
-//			}
-//			if ((TileMap[i][j] == '0')) {
-//				s_map.setTextureRect(IntRect(0, 115, 94, 209));
-//			}
-//			s_map.setPosition(j * 90, i * 90);
-//		}
-//	}
-//}
+
 int main()
 {
 

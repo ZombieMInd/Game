@@ -87,7 +87,7 @@ void Entity::textureRotate(sf::Vector2f pos) {
 
 	if (abs(pos.x - posOld.x) > 0.005 || abs(pos.y - posOld.y) > 0.005) {
 		sprite.setRotation(0);
-		float rotation = (getAngel(pos)*180./ 3.14159265);
+		float rotation = (getAngel(pos));
 		sprite.rotate(rotation);
 		dir = rotation;
 	}
@@ -135,7 +135,7 @@ float Entity::getAngel(sf::Vector2f pos) {
 	sf::Vector2f dir;
 	dir.x = pos.x - position.x;
 	dir.y = pos.y - position.y;
-	return (atan2(dir.y, dir.x) /** 180. / 3.14159265*/);
+	return (atan2(dir.y, dir.x) * 180. / 3.14159265);
 }
 
 sf::Vector2f Entity::getSpeed(sf::Vector2f pos) {
@@ -369,7 +369,7 @@ Enemy::Enemy(sf::Vector2f pos, int health) :
 
 void Enemy::update(float time, sf::Vector2f playerPos) {
 	behavior(playerPos);
-	move(50);
+	move(5);
 	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
 	textureRotate(playerPos);
 	sprite.setColor(sf::Color(255, 255, 255, 255));
@@ -377,23 +377,25 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 
 void Enemy::behavior(sf::Vector2f playerPos) {
 	float time = behaviorTimer.getElapsedTime().asMilliseconds();
-	if (distanceTo(playerPos) <= 500 && distanceTo(playerPos) > 200) {
+	if (distanceTo(playerPos) <= 700 && distanceTo(playerPos) > 400) {
 		if (time > 100) {
 			speed = getSpeed(playerPos);
+			//enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x, speed.y);
 			/*std::cout << "distance " << distanceTo(playerPos) << std::endl;
 			std::cout << "speed " << speed.x << "  " << speed.y << std::endl;*/
 			behaviorTimer.restart();
 		}
 	}
-	else if (distanceTo(playerPos) <= 200 && distanceTo(playerPos) > 70) {
+	else if (distanceTo(playerPos) <= 400 && distanceTo(playerPos) > 120) {
 		//float time = behaviorTimer.restart().asMilliseconds();
 		speed = getSpeed(playerPos);
+		//enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x, speed.y);
 			/*std::cout << "distance2222 " << distanceTo(playerPos) << std::endl;
 			std::cout << "time 2222" << time << std::endl;
 			std::cout << "speed " << speed.x << "  " << speed.y << std::endl;*/
 		//behaviorTimer.restart();
 	}
-	else if (distanceTo(playerPos) <= 70) {	
+	else if (distanceTo(playerPos) <= 120) {	
 		//std::cout << "LASTD " << distanceTo(playerPos)  << std::endl;
 		speed.x = 0;
 		speed.y = 0;
@@ -402,6 +404,7 @@ void Enemy::behavior(sf::Vector2f playerPos) {
 
 void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 	float h, w;
+	bool chcoords = true;
 	h = getRealSize().y / 2;
 	w = getRealSize().x / 2;
 	y -= h;
@@ -415,6 +418,7 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 		int j = dx <= 0 ? x / BLOCK_SIZE : (startX + 2 * w) / BLOCK_SIZE;
 		for (int i = y / BLOCK_SIZE; i < (startY + 2 * h) / BLOCK_SIZE; i++) {
 			if (TileMap[i][j] == '0') {
+				chcoords = false;
 				if (dx > 0 && TileMap[i][j - 1] != '0' && oldX <= j * BLOCK_SIZE - 2 * w) {
 					x = j * BLOCK_SIZE - 2 * w;
 					break;
@@ -425,12 +429,13 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 				}
 			}
 		}
-		setPosition(x + w, y + h);
+		//setPosition(x, y);
 	}
 	if (dy != 0) {
 		int i = dy <= 0 ? y / BLOCK_SIZE : (startY + 2 * h) / BLOCK_SIZE;
 		for (int j = x / BLOCK_SIZE; j < (startX + 2 * w) / BLOCK_SIZE; j++) {
 			if (TileMap[i][j] == '0') {
+				chcoords = false;
 				if (dy > 0 && TileMap[i - 1][j] != '0' && oldY <= i * BLOCK_SIZE - 2 * h) {
 					y = i * BLOCK_SIZE - 2 * h;
 					break;
@@ -441,10 +446,12 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 				}
 			}
 		}
-		setPosition(x + w, y + h);
+		//setPosition(x, y);
 	}
-	speed.x = 0;
-	speed.y = 0;
+	if (chcoords==false){
+		speed.x = 0;
+		speed.y = 0;
+}
 }
 
 void Enemy::getDamage(int damage) {
