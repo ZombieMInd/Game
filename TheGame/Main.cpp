@@ -48,7 +48,7 @@ int main()
 		}
 
 		window.clear();
-
+		//draw_map(s_map);
 		// прорисовка карты (в отдельный модуль)
 		for (int i = 0; i < HEIGHT_MAP; i++) {
 			for (int j = 0; j < WIDTH_MAP; j++) {

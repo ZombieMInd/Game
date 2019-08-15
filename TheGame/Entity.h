@@ -5,6 +5,7 @@
 #include <list>
 #include "map.h"
 #include "view.h"
+#include <math.h>
 
 const int BLOCK_SIZE = 90;
 bool key = false;
@@ -44,6 +45,7 @@ public:
 	virtual void getDamage(int damage) = 0;
 	virtual int getHP() = 0;
 	float getAngel(sf::Vector2f pos);
+	sf::Vector2f getSpeed(sf::Vector2f pos);
 	float distanceTo(sf::Vector2f pos);
 	float getDir();
 	void setOrigin(float x, float y);
@@ -74,8 +76,6 @@ Entity::~Entity()
 void Entity::setTexturePos(sf::Vector2i pos, sf::Vector2i size) {
 	sprite.setTextureRect(sf::IntRect(pos.x, pos.y, size.x, size.y));
 	sprite.scale(sf::Vector2f(PLAYER_SCALE, PLAYER_SCALE));
-	//realSize.x = size.x*PLAYER_SCALE;
-	//realSize.y = size.y*PLAYER_SCALE;
 	sprite.setOrigin(size.x / 2, size.y / 2);
 }
 
@@ -87,7 +87,7 @@ void Entity::textureRotate(sf::Vector2f pos) {
 
 	if (abs(pos.x - posOld.x) > 0.005 || abs(pos.y - posOld.y) > 0.005) {
 		sprite.setRotation(0);
-		float rotation = getAngel(pos);
+		float rotation = (getAngel(pos));
 		sprite.rotate(rotation);
 		dir = rotation;
 	}
@@ -136,6 +136,17 @@ float Entity::getAngel(sf::Vector2f pos) {
 	dir.x = pos.x - position.x;
 	dir.y = pos.y - position.y;
 	return (atan2(dir.y, dir.x) * 180. / 3.14159265);
+}
+
+sf::Vector2f Entity::getSpeed(sf::Vector2f pos) {
+	sf::Vector2f dir;
+	dir.x = pos.x - position.x;
+	dir.y = pos.y - position.y;
+	float hyp = sqrt(dir.x*dir.x + dir.y*dir.y);
+	sf::Vector2f res;
+	res.x = dir.x / hyp;
+	res.y = dir.y / hyp;
+	return res;
 }
 
 float Entity::distanceTo(sf::Vector2f pos) {
@@ -204,6 +215,7 @@ void Player::controle() {
 		if (timePassed >= attackSpeed) {
 			setAttacking(true);
 			attackTimer.restart();
+			//
 			std::cout << getAngel(sf::Vector2f(1000, 1000)) << " " << distanceTo(sf::Vector2f(1000, 1000)) << std::endl;
 		}
 	}
@@ -241,8 +253,9 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 	float newX;
 	float oldX = x - dx;
 	float oldY = y - dy;
+	int j = dx <= 0 ? x / BLOCK_SIZE : (startX + 2 * w) / BLOCK_SIZE;
 	if (dx != 0) {
-		int j = dx <= 0 ? x / BLOCK_SIZE : (startX + 2 * w) / BLOCK_SIZE;
+		//int j = dx <= 0 ? x / BLOCK_SIZE : (startX + 2 * w) / BLOCK_SIZE;
 		for (int i = y / BLOCK_SIZE; i < (startY + 2 * h) / BLOCK_SIZE; i++) {
 			if (TileMap[i][j] == '0') {
 				if (dx > 0 && TileMap[i][j - 1] != '0' && oldX <= j * BLOCK_SIZE - 2 * w) {
@@ -257,8 +270,9 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 		}
 		setPosition(x + w, y + h);
 	}
+	int i = dy <= 0 ? y / BLOCK_SIZE : (startY + 2 * h) / BLOCK_SIZE;
 	if (dy != 0) {
-		int i = dy <= 0 ? y / BLOCK_SIZE : (startY + 2 * h) / BLOCK_SIZE;
+		//int i = dy <= 0 ? y / BLOCK_SIZE : (startY + 2 * h) / BLOCK_SIZE;
 		for (int j = x / BLOCK_SIZE; j < (startX + 2 * w) / BLOCK_SIZE; j++) {
 			if (TileMap[i][j] == '0') {
 				if (dy > 0 && TileMap[i - 1][j] != '0' && oldY <= i * BLOCK_SIZE - 2 * h) {
@@ -273,7 +287,11 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 		}
 		setPosition(x + w, y + h);
 	}
-
+	if (TileMap[i][j] == 'b') {
+		key = true;
+		map_i = i;
+		map_j = j;
+	}
 	speed.x = 0;
 	speed.y = 0;
 }
@@ -281,7 +299,7 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 void Player::opening_chest() {
 	TileMap[map_i][map_j] = 't';
 	weapon = "sword";
-	sprite.setTextureRect(sf::IntRect(120, 115, 189 / 2, 249 / 2));
+	sprite.setTextureRect(sf::IntRect(0, 365, 90, 455));
 }
 
 void Player::setAttackCircle() {
@@ -351,15 +369,19 @@ Enemy::Enemy(sf::Vector2f pos, int health) :
 
 void Enemy::update(float time, sf::Vector2f playerPos) {
 	behavior(playerPos);
-	move(time);
-	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
+	move(5);
+	//enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*5, speed.y*5);
 	textureRotate(playerPos);
 	sprite.setColor(sf::Color(255, 255, 255, 255));
+<<<<<<< HEAD
 
+=======
+>>>>>>> 632949d3477695817ac07a9e61dc380326e118e7
 }
 
 void Enemy::behavior(sf::Vector2f playerPos) {
 	float time = behaviorTimer.getElapsedTime().asMilliseconds();
+<<<<<<< HEAD
 	if (distanceTo(playerPos) <= 500 && time > 100) {
 		speed.x = cos((int)getAngel(playerPos)) / 100;
 		speed.y = sin((int)getAngel(playerPos)) / 100;
@@ -408,13 +430,30 @@ void Enemy::behavior(sf::Vector2f playerPos) {
 			speed.y *= 4;
 
 		}
+=======
+	if (distanceTo(playerPos) <= 700 && distanceTo(playerPos) > 400) {
+		if (time > 100) {
+			speed = getSpeed(playerPos);
+			enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x, speed.y);
+			behaviorTimer.restart();
+		}
+	}
+	else if (distanceTo(playerPos) <= 400 && distanceTo(playerPos) > 120) {
+		speed = getSpeed(playerPos);
+		enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x, speed.y);
+	}
+	else if (distanceTo(playerPos) <= 120) {	
+		speed.x = 0;
+		speed.y = 0;
+>>>>>>> 632949d3477695817ac07a9e61dc380326e118e7
 	}
 }
 
 void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 	float h, w;
-	h = getRealSize().y / 2;
-	w = getRealSize().x / 2;
+	bool chcoords = true;
+	w = getRealSize().y / 2;
+	h = getRealSize().x / 2;
 	y -= h;
 	x -= w;
 	float startX = x;
@@ -428,15 +467,18 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 			if (TileMap[i][j] == '0') {
 				if (dx > 0 && TileMap[i][j - 1] != '0' && oldX <= j * BLOCK_SIZE - 2 * w) {
 					x = j * BLOCK_SIZE - 2 * w;
+					chcoords = false;
+					setPosition(x + w, y + h);
 					break;
 				}
 				if (dx < 0 && TileMap[i][j + 1] != '0' && oldX >= (j + 1) * BLOCK_SIZE) {
 					x = (j + 1) * BLOCK_SIZE;
+					chcoords = false;
+					setPosition(x + w, y + h);
 					break;
 				}
 			}
 		}
-		setPosition(x + w, y + h);
 	}
 	if (dy != 0) {
 		int i = dy <= 0 ? y / BLOCK_SIZE : (startY + 2 * h) / BLOCK_SIZE;
@@ -444,19 +486,23 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 			if (TileMap[i][j] == '0') {
 				if (dy > 0 && TileMap[i - 1][j] != '0' && oldY <= i * BLOCK_SIZE - 2 * h) {
 					y = i * BLOCK_SIZE - 2 * h;
+					chcoords = false;
+					setPosition(x + w, y + h);
 					break;
 				}
 				if (dy < 0 && TileMap[i + 1][j] != '0' && oldY >= (i + 1) * BLOCK_SIZE) {
 					y = (i + 1) * BLOCK_SIZE;
+					chcoords = false;
+					setPosition(x + w, y + h);
 					break;
 				}
 			}
 		}
-		setPosition(x + w, y + h);
 	}
-
-	speed.x = 0;
-	speed.y = 0;
+	if (!chcoords){
+		speed.x = 0;
+		speed.y = 0;
+	}
 }
 
 void Enemy::getDamage(int damage) {
