@@ -220,7 +220,7 @@ void Player::update(float time, sf::Vector2f pos) {
 	if (getAttacking()) {
 		for (auto ent : entities) {
 			if (distanceTo(ent->getPos()) <= attackCircle.x &&
-				getAngel(ent->getPos()) < getDir() + attackCircle.y && 
+				getAngel(ent->getPos()) < getDir() + attackCircle.y &&
 				getAngel(ent->getPos()) > getDir() - attackCircle.y)
 				//std::cout << getRect().left << " " << getRect().top << " " << 
 				//getRect().height << " " << getRect().width << std::endl;
@@ -303,7 +303,7 @@ void Player::attackAnimation() {
 		animationFrame = 1;
 		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
 	}
-	if (attackTimer.getElapsedTime().asMilliseconds() > 50 && 
+	if (attackTimer.getElapsedTime().asMilliseconds() > 50 &&
 		attackTimer.getElapsedTime().asMilliseconds() < 100) {
 		animationFrame = 2;
 		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
@@ -323,7 +323,7 @@ void Player::attackAnimation() {
 		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
 	}
 	//std::cout << attackTimer.getElapsedTime().asMilliseconds() << std::endl;
-	
+
 }
 
 //ENEMY CLASS==========================================
@@ -346,7 +346,7 @@ Enemy::Enemy(sf::Vector2f pos, int health) :
 	hp = health;
 	setTexturePos(sf::Vector2i(260, 265), sf::Vector2i(154, 59));
 	void enemyInteractionWithMap(float x, float y, float dx, float dy);
-	void update(float time, sf::Vector2f pos);	
+	void update(float time, sf::Vector2f pos);
 }
 
 void Enemy::update(float time, sf::Vector2f playerPos) {
@@ -355,7 +355,7 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
 	textureRotate(playerPos);
 	sprite.setColor(sf::Color(255, 255, 255, 255));
-	
+
 }
 
 void Enemy::behavior(sf::Vector2f playerPos) {
@@ -369,34 +369,34 @@ void Enemy::behavior(sf::Vector2f playerPos) {
 		behaviorTimer.restart();
 	}
 	/*if ((playerPos.x - sprite.getPosition().x) < 50 &&
-		(playerPos.x - sprite.getPosition().x) > 0 && 
+		(playerPos.x - sprite.getPosition().x) > 0 &&
 		(playerPos.x - sprite.getPosition().x) > (playerPos.y - sprite.getPosition().y) ||
 		(playerPos.y - sprite.getPosition().y) < 50 &&
 		(playerPos.y - sprite.getPosition().y) > 0 &&
 		(playerPos.y - sprite.getPosition().y) < (playerPos.x - sprite.getPosition().x)) {
 		speed.x = 0.25;
 	}
-	if ((playerPos.x - sprite.getPosition().x) < 50 && 
-		(playerPos.x - sprite.getPosition().x) > 0 && 
+	if ((playerPos.x - sprite.getPosition().x) < 50 &&
+		(playerPos.x - sprite.getPosition().x) > 0 &&
 		(playerPos.x - sprite.getPosition().x) < (playerPos.y - sprite.getPosition().y) ||
-		(playerPos.y - sprite.getPosition().y) < 50 && 
-		(playerPos.y - sprite.getPosition().y) > 0 && 
+		(playerPos.y - sprite.getPosition().y) < 50 &&
+		(playerPos.y - sprite.getPosition().y) > 0 &&
 		(playerPos.y - sprite.getPosition().y) > (playerPos.x - sprite.getPosition().x)) {
 		speed.y = 0.25;
 	}
-	if ((playerPos.x - sprite.getPosition().x) > -50 && 
-		(playerPos.x - sprite.getPosition().x) < 0 && 
+	if ((playerPos.x - sprite.getPosition().x) > -50 &&
+		(playerPos.x - sprite.getPosition().x) < 0 &&
 		(playerPos.x - sprite.getPosition().x) < (playerPos.y - sprite.getPosition().y) ||
-		(playerPos.y - sprite.getPosition().y) > -50 && 
-		(playerPos.y - sprite.getPosition().y) < 0 && 
+		(playerPos.y - sprite.getPosition().y) > -50 &&
+		(playerPos.y - sprite.getPosition().y) < 0 &&
 		(playerPos.y - sprite.getPosition().y) > (playerPos.x - sprite.getPosition().x)) {
 		speed.x = -0.25;
 	}
-	if ((playerPos.x - sprite.getPosition().x) > -50 && 
-		(playerPos.x - sprite.getPosition().x) < 0 && 
+	if ((playerPos.x - sprite.getPosition().x) > -50 &&
+		(playerPos.x - sprite.getPosition().x) < 0 &&
 		(playerPos.x - sprite.getPosition().x) > (playerPos.y - sprite.getPosition().y) ||
-		(playerPos.y - sprite.getPosition().y) > -50 && 
-		(playerPos.y - sprite.getPosition().y) < 0 && 
+		(playerPos.y - sprite.getPosition().y) > -50 &&
+		(playerPos.y - sprite.getPosition().y) < 0 &&
 		(playerPos.y - sprite.getPosition().y) < (playerPos.x - sprite.getPosition().x)) {
 		speed.y = -0.25;
 	}*/
@@ -406,7 +406,7 @@ void Enemy::behavior(sf::Vector2f playerPos) {
 		if (time > 2500) {
 			speed.x *= 4;
 			speed.y *= 4;
-			
+
 		}
 	}
 }
