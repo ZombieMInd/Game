@@ -88,9 +88,9 @@ int main()
 
 		for (iter = entities.begin(); iter != entities.end();) {
 			Entity *ent = *iter;
-			ent->update(time, player.sprite.getPosition());
+			ent->update(time, player.getPos());
 			if (ent->getHP() <= 0) {
-				iter = entities.erase(iter); 
+				iter = entities.erase(iter);
 				delete ent;
 			}
 			else iter++;
