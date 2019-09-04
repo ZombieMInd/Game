@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include "Entity.h"
-
+#include "Enemy.h"
 using namespace sf;
 
 
