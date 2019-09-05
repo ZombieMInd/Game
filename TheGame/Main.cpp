@@ -6,9 +6,7 @@ using namespace sf;
 
 int main()
 {
-
 	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
-
 	float CurrentFrame = 0;
 	sf::Clock clock;
 	Player player(sf::Vector2f(200, 200), 100);

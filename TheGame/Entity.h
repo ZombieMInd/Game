@@ -163,8 +163,3 @@ float Entity::getDir() {
 void Entity::setOrigin(float x, float y) {
 	sprite.setOrigin(x, y);
 }
-
-//PLAYER CLASS=======================================================
-
-
-//ENEMY CLASS==========================================

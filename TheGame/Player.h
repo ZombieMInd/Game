@@ -90,7 +90,6 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 	float oldY = y - dy;
 	int j = dx <= 0 ? x / BLOCK_SIZE : (startX + 2 * w) / BLOCK_SIZE;
 	if (dx != 0) {
-		//int j = dx <= 0 ? x / BLOCK_SIZE : (startX + 2 * w) / BLOCK_SIZE;
 		for (int i = y / BLOCK_SIZE; i < (startY + 2 * h) / BLOCK_SIZE; i++) {
 			if (TileMap[i][j] == '0') {
 				if (dx > 0 && TileMap[i][j - 1] != '0' && oldX <= j * BLOCK_SIZE - 2 * w) {
@@ -107,7 +106,6 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 	}
 	int i = dy <= 0 ? y / BLOCK_SIZE : (startY + 2 * h) / BLOCK_SIZE;
 	if (dy != 0) {
-		//int i = dy <= 0 ? y / BLOCK_SIZE : (startY + 2 * h) / BLOCK_SIZE;
 		for (int j = x / BLOCK_SIZE; j < (startX + 2 * w) / BLOCK_SIZE; j++) {
 			if (TileMap[i][j] == '0') {
 				if (dy > 0 && TileMap[i - 1][j] != '0' && oldY <= i * BLOCK_SIZE - 2 * h) {
