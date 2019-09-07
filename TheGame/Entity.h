@@ -16,8 +16,6 @@ class Entity
 	sf::Vector2f position;
 	sf::Vector2i size;
 	sf::Vector2f realSize;
-	int height;
-	int width;
 	sf::String file;
 	sf::Texture texture;
 	sf::Vector2f posOld;
