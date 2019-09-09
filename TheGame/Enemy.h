@@ -33,9 +33,20 @@ Enemy::Enemy(sf::Vector2f pos, int health, String type) :
 void Enemy::update(float time, sf::Vector2f playerPos) {
 	behavior(playerPos);
 	move(time);
-	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*5, speed.y*5);
+	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
 	textureRotate(playerPos);
 	sprite.setColor(sf::Color(255, 255, 255, 255));
+	float damage = setEnemyAttack();
+	if (getAttacking()) {
+		if ((distanceTo(sprite.getPosition()) <= radiusAttack.x) &&
+			(getAngel(sprite.getPosition()) < getDir() + radiusAttack.y) &&
+			(getAngel(sprite.getPosition()) > getDir() - radiusAttack.y)) {
+			//просто строка снизу
+			damage = 100;
+				//sprite.getDamage(10);
+		}
+		//setAttacking(false);
+	}
 }
 
 
