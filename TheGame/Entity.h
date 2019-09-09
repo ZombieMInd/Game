@@ -7,7 +7,7 @@
 #include "view.h"
 #include <math.h>
 
-const int BLOCK_SIZE = 90;
+const int BLOCK_SIZE = 94;
 bool key = false;
 
 const float PLAYER_SCALE = 0.8;
@@ -26,7 +26,7 @@ class Entity
 public:
 	sf::Vector2f speed;
 	sf::Sprite sprite;
-	Entity(sf::Vector2f pos, sf::Vector2f s, sf::String f);
+	Entity(sf::Vector2f pos, sf::Vector2f size, sf::String file);
 	~Entity();
 	void setTexturePos(sf::Vector2i pos, sf::Vector2i size);
 	void setTextureForAnimation(sf::Vector2i pos, sf::Vector2i size);
