@@ -261,3 +261,5 @@ __pycache__/
 *.pyc
 /TheGame/TheGame.vcxproj
 /TheGame/TheGame.vcxproj.filters
+/TheGame/TheGame.vcxproj
+/TheGame/TheGame.vcxproj.filters

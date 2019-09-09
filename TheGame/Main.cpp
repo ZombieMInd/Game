@@ -11,7 +11,7 @@ int main()
 	sf::Clock clock;
 	Player player(sf::Vector2f(200, 200), 100);
 	Image map_image;
-	map_image.loadFromFile("assets/G_v05.png");
+	map_image.loadFromFile("assets/G_v06.png");
 	Texture map;
 	map.loadFromImage(map_image);
 	Sprite s_map;
@@ -50,18 +50,18 @@ int main()
 		for (int i = 0; i < HEIGHT_MAP; i++) {
 			for (int j = 0; j < WIDTH_MAP; j++) {
 				if (TileMap[i][j] == ' ') {
-					s_map.setTextureRect(IntRect(0, 0, 94, 94));
+					s_map.setTextureRect(IntRect(890, 65, 94, 94));
 				}
 				if (TileMap[i][j] == 'b') {
-					s_map.setTextureRect(IntRect(0, 255, 94, 349));
+					s_map.setTextureRect(IntRect(890, 320, 94, 94));
 				}
 				if (TileMap[i][j] == 't') {
-					s_map.setTextureRect(IntRect(0, 365, 94, 459));
+					s_map.setTextureRect(IntRect(890, 430, 94, 94));
 				}
 				if ((TileMap[i][j] == '0')) {
-					s_map.setTextureRect(IntRect(0, 115, 94, 209));
+					s_map.setTextureRect(IntRect(890, 180, 94, 209));
 				}
-				s_map.setPosition(j * 90, i * 90);
+				s_map.setPosition(j * 94, i * 94);
 				window.draw(s_map);
 			}
 		}

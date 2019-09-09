@@ -14,6 +14,7 @@ public:
 	void enemyInteractionWithMap(float x, float y, float dx, float dy);
 	void getDamage(int damage);
 	int getHP();
+	void moveAnimation();
 };
 
 Enemy::Enemy(sf::Vector2f pos, int health) :
@@ -105,4 +106,8 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 
 	int Enemy::getHP() {
 		return hp;
+	}
+
+	void Enemy::moveAnimation() {
+
 	}
