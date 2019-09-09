@@ -19,14 +19,15 @@ int main()
 	Font font;
 	font.loadFromFile("assets/CyrilicOld.ttf");
 	Text text("", font, 32);
-
+	// как это работает?
 	for (int i = 0; i < HEIGHT_MAP; i++) {
 		for (int j = 0; j < WIDTH_MAP; j++) {
 			if ((TileMap[i][j] == 'e')) {
-				entities.push_back(new Enemy(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE), 100));
+				entities.push_back(new Enemy(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE), 100," "));
 			}
 		}
 	}
+
 	while (window.isOpen())
 	{
 		//для плавности и контроля игрока
@@ -43,7 +44,7 @@ int main()
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
-
+		
 		window.clear();
 		//draw_map(s_map);
 		// прорисовка карты (в отдельный модуль)
@@ -100,7 +101,5 @@ int main()
 		window.draw(player.sprite);
 		window.display();
 	}
-	//system("pause");
 	return EXIT_SUCCESS;
-
 }
