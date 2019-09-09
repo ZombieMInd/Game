@@ -1,24 +1,29 @@
 #pragma once
 #include "Entity.h"
 #include "Player.h"
+#include <string>
 
 class Enemy : public Entity {
 private:
 	int hp;
 	sf::Clock attackTimer;
 	sf::Clock  behaviorTimer;
+	String enemyType;
+	sf::Vector2f radiusAttack;// первое это длина прямоугольника который BadDog кусает, вторая это ширина
 public:
-	Enemy(sf::Vector2f pos, int health);
+	Enemy(sf::Vector2f pos, int health, String type);
 	void update(float time, sf::Vector2f pos);
 	void behavior(sf::Vector2f playerPos);
 	void enemyInteractionWithMap(float x, float y, float dx, float dy);
 	void getDamage(int damage);
+	int setEnemyAttack();
 	int getHP();
 };
 
-Enemy::Enemy(sf::Vector2f pos, int health) :
+Enemy::Enemy(sf::Vector2f pos, int health, String type) :
 	Entity(pos, sf::Vector2f(154, 59), "G_v05.png") {
 	hp = health;
+	enemyType = "BadDog";
 	setTexturePos(sf::Vector2i(260, 265), sf::Vector2i(154, 59));
 	void enemyInteractionWithMap(float x, float y, float dx, float dy);
 	void update(float time, sf::Vector2f pos);
@@ -105,4 +110,14 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 
 	int Enemy::getHP() {
 		return hp;
+	}
+	//определение атаки в зависимости от Enemy; будет умножаться на 10+;ну и радиус поражения в зависимости
+	// от Enemy  тоже разный
+	int Enemy::setEnemyAttack() {
+		int realDam = 0;
+		if (enemyType == "BadDog") {
+			realDam = 1;
+			radiusAttack = sf::Vector2f(80,45);
+		}
+		return realDam;
 	}

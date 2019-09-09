@@ -173,6 +173,4 @@ void Player::attackAnimation() {
 		animationFrame = 0;
 		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
 	}
-	//std::cout << attackTimer.getElapsedTime().asMilliseconds() << std::endl;
-
 }
