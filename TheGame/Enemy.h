@@ -22,17 +22,17 @@ public:
 };
 
 Enemy::Enemy(sf::Vector2f pos, int health, String type) :
-	Entity(pos, sf::Vector2f(154, 59), "G_v05.png") {
+	Entity(pos, sf::Vector2f(154, 59), "G_v06.png") {
 	hp = health;
 	enemyType = "BadDog";
-	setTexturePos(sf::Vector2i(260, 265), sf::Vector2i(154, 59));
+	setTexturePos(sf::Vector2i(10, 440), sf::Vector2i(154, 59));
 	void enemyInteractionWithMap(float x, float y, float dx, float dy);
 	void update(float time, sf::Vector2f pos);
 }
 
 void Enemy::update(float time, sf::Vector2f playerPos) {
 	behavior(playerPos);
-	move(5);
+	move(time);
 	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*5, speed.y*5);
 	textureRotate(playerPos);
 	sprite.setColor(sf::Color(255, 255, 255, 255));
@@ -48,7 +48,8 @@ void Enemy::behavior(sf::Vector2f playerPos) {
 		}
 	}
 	else if (distanceTo(playerPos) <= 400 && distanceTo(playerPos) > 120) {
-		speed = getSpeed(playerPos);
+		speed.x = getSpeed(playerPos).x / 10;
+		speed.y = getSpeed(playerPos).y / 10;
 	}
 	else if (distanceTo(playerPos) <= 120) {
 		speed.x = 0;
@@ -112,11 +113,12 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 	int Enemy::getHP() {
 		return hp;
 	}
-<<<<<<< HEAD
+
 
 	void Enemy::moveAnimation() {
 
-=======
+	}
+
 	//определение атаки в зависимости от Enemy; будет умножаться на 10+;ну и радиус поражения в зависимости
 	// от Enemy  тоже разный
 	int Enemy::setEnemyAttack() {
@@ -126,5 +128,4 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 			radiusAttack = sf::Vector2f(80,45);
 		}
 		return realDam;
->>>>>>> 26a40610e56046a90af1adc29a17e66f8b85ee2b
 	}
