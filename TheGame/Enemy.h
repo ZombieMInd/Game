@@ -10,40 +10,47 @@ private:
 	sf::Clock  behaviorTimer;
 	String enemyType;
 	sf::Vector2f radiusAttack;// первое это длина прямоугольника который BadDog кусает, вторая это ширина
+	Player player;
 public:
 	Enemy(sf::Vector2f pos, int health, String type);
 	void update(float time, sf::Vector2f pos);
 	void behavior(sf::Vector2f playerPos);
 	void enemyInteractionWithMap(float x, float y, float dx, float dy);
 	void getDamage(int damage);
+	void setPlayer(Player player);
 	int setEnemyAttack();
 	int getHP();
 	void moveAnimation();
 };
+//std::list<Enemy*> enemies;
+//std::list<Enemy*>::iterator iter;
+
 
 Enemy::Enemy(sf::Vector2f pos, int health, String type) :
 	Entity(pos, sf::Vector2f(154, 59), "G_v06.png") {
 	hp = health;
 	enemyType = "BadDog";
 	setTexturePos(sf::Vector2i(10, 440), sf::Vector2i(154, 59));
-	void enemyInteractionWithMap(float x, float y, float dx, float dy);
-	void update(float time, sf::Vector2f pos);
+	//void enemyInteractionWithMap(float x, float y, float dx, float dy);
+	//void update(float time, sf::Vector2f pos);
 }
 
-void Enemy::update(float time, sf::Vector2f playerPos) {
-	behavior(playerPos);
+void Enemy::setPlayer(Player player) {
+	this->player = player;
+}
+
+void Enemy::update(float time, sf::Vector2f pos) {
+	behavior(player.getPos());
 	move(time);
 	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
-	textureRotate(playerPos);
+	textureRotate(player.getPos());
 	sprite.setColor(sf::Color(255, 255, 255, 255));
 	float damage = setEnemyAttack();
 	if (getAttacking()) {
 		if ((distanceTo(sprite.getPosition()) <= radiusAttack.x) &&
 			(getAngel(sprite.getPosition()) < getDir() + radiusAttack.y) &&
 			(getAngel(sprite.getPosition()) > getDir() - radiusAttack.y)) {
-			//просто строка снизу
-			damage = 100;
-				//sprite.getDamage(10);
+			player.getDamage(damage);
 		}
 		//setAttacking(false);
 	}
