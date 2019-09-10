@@ -34,19 +34,19 @@ Player::Player(sf::Vector2f pos, int health) :
 
 void Player::controle() {
 	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))) {
-		speed.y = -0.3;
+		speed.y = -0.3f;
 	}
 	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))) {
-		speed.y = 0.3;
+		speed.y = 0.3f;
 	}
 	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))) {
-		speed.x = -0.3;
+		speed.x = -0.3f;
 	}
 	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))) {
-		speed.x = 0.3;
+		speed.x = 0.3f;
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		float timePassed = attackTimer.getElapsedTime().asMilliseconds();
+		int timePassed = attackTimer.getElapsedTime().asMilliseconds();
 		if (timePassed >= attackSpeed) {
 			setAttacking(true);
 			attackTimer.restart();
