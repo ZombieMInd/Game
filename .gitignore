@@ -62,3 +62,7 @@
 /TheGame/Debug/vc141.pdb
 /TheGame/Debug/vc142.idb
 /TheGame/Debug/vc142.pdb
+/.vs/*
+/TheGame/Debug/*
+/TheGame/x64/*
+/x64/*
