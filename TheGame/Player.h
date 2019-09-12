@@ -12,6 +12,7 @@ private:
 
 public:
 	Player(sf::Vector2f pos, int health);
+	Player();
 	void controle();
 	void update(float time, sf::Vector2f pos);
 	void interactionWithMap(float x, float y, float dx, float dy);
@@ -30,6 +31,10 @@ Player::Player(sf::Vector2f pos, int health) :
 	attackSpeed = 600;
 	attackCircle = sf::Vector2f(0, 0);
 	animationFrame = 0;
+}
+
+Player::Player()
+{
 }
 
 void Player::controle() {

@@ -26,6 +26,7 @@ class Entity
 public:
 	sf::Vector2f speed;
 	sf::Sprite sprite;
+	Entity();
 	Entity(sf::Vector2f pos, sf::Vector2f size, sf::String file);
 	~Entity();
 	void setTexturePos(sf::Vector2i pos, sf::Vector2i size);
@@ -51,6 +52,10 @@ public:
 
 std::list<Entity*> entities;
 std::list<Entity*>::iterator iter;
+
+Entity::Entity()
+{
+}
 
 Entity::Entity(sf::Vector2f pos, sf::Vector2f s, sf::String f)
 {

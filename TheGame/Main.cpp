@@ -23,7 +23,9 @@ int main()
 	for (int i = 0; i < HEIGHT_MAP; i++) {
 		for (int j = 0; j < WIDTH_MAP; j++) {
 			if ((TileMap[i][j] == 'e')) {
-				entities.push_back(new Enemy(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE), 100," "));
+				Enemy *enemy = new Enemy(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE), 100, " ");
+				enemy->setPlayer(player);
+				entities.push_back(enemy);
 			}
 			if (TileMap[i][j] == 'b') {
 				chests.push_back(new Chest(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE)));
@@ -85,11 +87,11 @@ int main()
 		player.update(time, pos);
 
 		for (iter = entities.begin(); iter != entities.end();) {
-			Entity *ent = *iter;
-			ent->update(time, player.getPos());
-			if (ent->getHP() <= 0) {
+			Entity *enemy = *iter;
+			enemy->update(time, pos);
+			if (enemy->getHP() <= 0) {
 				iter = entities.erase(iter);
-				delete ent;
+				delete enemy;
 			}
 			else iter++;
 		}
