@@ -88,7 +88,7 @@ int main()
 
 		for (iter = entities.begin(); iter != entities.end();) {
 			Entity *enemy = *iter;
-			enemy->update(time, pos);
+			enemy->update(time, player.getPos());
 			if (enemy->getHP() <= 0) {
 				iter = entities.erase(iter);
 				delete enemy;
@@ -104,6 +104,10 @@ int main()
 
 		for (auto ent : entities) {
 			window.draw(ent->sprite);
+		}
+
+		for (auto chest : chests) {
+			window.draw(chest->sprite);
 		}
 		
 		window.draw(player.sprite);

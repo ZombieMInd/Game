@@ -7,8 +7,9 @@ private:
 	sf::Vector2f realSize;
 	sf::String file;
 	sf::Texture texture;
-	sf::Sprite sprite;
+	
 public:
+	sf::Sprite sprite;
 	sf::Vector2f position;
 	sf::Text text;
 	Object(sf::Vector2f pos, sf::Vector2i size);
