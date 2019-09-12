@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include "Enemy.h"
+#include "Objects.h"
 using namespace sf;
 
 
@@ -26,6 +26,9 @@ int main()
 				Enemy *enemy = new Enemy(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE), 100, " ");
 				enemy->setPlayer(player);
 				entities.push_back(enemy);
+			}
+			if (TileMap[i][j] == 'b') {
+				chests.push_back(new Chest(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE)));
 			}
 		}
 	}
@@ -54,9 +57,6 @@ int main()
 			for (int j = 0; j < WIDTH_MAP; j++) {
 				if (TileMap[i][j] == ' ') {
 					s_map.setTextureRect(IntRect(890, 65, 94, 94));
-				}
-				if (TileMap[i][j] == 'b') {
-					s_map.setTextureRect(IntRect(890, 320, 94, 94));
 				}
 				if (TileMap[i][j] == 't') {
 					s_map.setTextureRect(IntRect(890, 430, 94, 94));
@@ -94,6 +94,12 @@ int main()
 				delete enemy;
 			}
 			else iter++;
+		}
+
+		for (chestIter = chests.begin(); chestIter != chests.end();) {
+			Chest* chest = *chestIter;
+			chest->update(player.getPos());
+			chestIter++;
 		}
 
 		for (auto ent : entities) {

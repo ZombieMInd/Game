@@ -10,7 +10,7 @@
 const int BLOCK_SIZE = 94;
 bool key = false;
 
-const float PLAYER_SCALE = 0.8;
+const float PLAYER_SCALE = 0.8f;
 class Entity
 {
 	sf::Vector2f position;
@@ -79,7 +79,7 @@ Entity::~Entity()
 void Entity::setTexturePos(sf::Vector2i pos, sf::Vector2i size) {
 	sprite.setTextureRect(sf::IntRect(pos.x, pos.y, size.x, size.y));
 	sprite.scale(sf::Vector2f(PLAYER_SCALE, PLAYER_SCALE));
-	sprite.setOrigin(size.x / 2, size.y / 2);
+	sprite.setOrigin((float)size.x / 2, (float)size.y / 2);
 }
 
 void Entity::setTextureForAnimation(sf::Vector2i pos, sf::Vector2i size) {
