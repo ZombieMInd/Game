@@ -44,7 +44,7 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 	move(time);
 	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
 	textureRotate(playerPos);
-	sprite.setColor(sf::Color(255, 255, 255, 255));
+	//sprite.setColor(sf::Color(255, 255, 255, 255));
 	float damage = setEnemyAttack();
 	if (getAttacking()) {
 		if ((distanceTo(sprite.getPosition()) <= radiusAttack.x) &&

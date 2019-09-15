@@ -28,10 +28,11 @@ int main()
 				entities.push_back(enemy);
 			}
 			if (TileMap[i][j] == 'b') {
-				chests.push_back(new Chest(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE)));
+				chests.push_back(new Chest(Vector2f((j + 0.5) * BLOCK_SIZE, (i + 0.5) * BLOCK_SIZE)));
 			}
 		}
 	}
+	
 
 	while (window.isOpen())
 	{
@@ -68,9 +69,15 @@ int main()
 				window.draw(s_map);
 			}
 		}
+		for (auto chest : chests) {
+			window.draw(chest->sprite);
+		}
+		for (auto obj : objects) {
+			window.draw(obj->sprite);
+		}
 
-		text.setStyle(sf::Text::Bold | sf::Text::Underlined);
-		if (key) {
+		
+		/*if (key) {
 			text.setString("Press (Z) to open this chest");
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
 				player.opening_chest();
@@ -81,7 +88,7 @@ int main()
 		}
 		key = false;
 		text.setPosition(player.sprite.getPosition().x + 45, player.sprite.getPosition().y);
-		window.draw(text);
+		window.draw(text);*/
 		window.setView(view);
 		
 		player.update(time, pos);
@@ -99,6 +106,7 @@ int main()
 		for (chestIter = chests.begin(); chestIter != chests.end();) {
 			Chest* chest = *chestIter;
 			chest->update(player.getPos());
+			window.draw(chest->text);
 			chestIter++;
 		}
 
@@ -106,9 +114,7 @@ int main()
 			window.draw(ent->sprite);
 		}
 
-		for (auto chest : chests) {
-			window.draw(chest->sprite);
-		}
+		
 		
 		window.draw(player.sprite);
 		window.display();

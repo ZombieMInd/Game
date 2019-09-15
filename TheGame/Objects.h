@@ -23,7 +23,6 @@ public:
 Object::Object(sf::Vector2f pos, sf::Vector2i s) {
 	texture.loadFromFile("assets/G_v06.png");
 	sprite.setTexture(texture);
-	setTexturePos(sf::Vector2i(890, 320), size);
 	position = pos;
 	size = s;
 }
@@ -34,8 +33,9 @@ Object::~Object() {
 
 void Object::setTexturePos(sf::Vector2i pos, sf::Vector2i size) {
 	sprite.setTextureRect(sf::IntRect(pos.x, pos.y, size.x, size.y));
-	sprite.scale(sf::Vector2f(PLAYER_SCALE, PLAYER_SCALE));
+	//sprite.scale(sf::Vector2f(PLAYER_SCALE, PLAYER_SCALE));
 	sprite.setOrigin(size.x / 2, size.y / 2);
+	sprite.setPosition(position.x, position.y);
 }
 
 sf::Vector2i Object::getSize() {
@@ -61,6 +61,8 @@ public:
 
 Chest::Chest(sf::Vector2f pos) :
 	Object(pos, sf::Vector2i(94, 94)) {
+	setTexturePos(sf::Vector2i(890, 320), sf::Vector2i(94, 94));
+	text.setStyle(sf::Text::Bold | sf::Text::Underlined);
 	text.setString("");
 	isOpen = false;
 }
@@ -74,10 +76,7 @@ void Chest::interaction(sf::Vector2f playerPos) {
 	text.setPosition(position.x + 45, position.y);
 }
 
-void Chest::chestOpening() {
-	isOpen = true;
-	setTexturePos(sf::Vector2i(890, 430), getSize());
-}
+
 
 void Chest::update(sf::Vector2f playerPos) {
 	if (distanceTo(playerPos) <= 150) {
@@ -92,9 +91,44 @@ std::list<Chest*> chests;
 std::list<Chest*>::iterator chestIter;
 
 class Weapon : public Object {
-
+	int classOfWeapon;
+	int damage;
+public:
+	void interaction(sf::Vector2f playerPos);
+	Weapon(sf::Vector2f position, int classOfWeapon);
+	//~Weapon();
 };
+
+Weapon::Weapon(sf::Vector2f pos, int cow) :
+	Object(pos, sf::Vector2i(94, 94)) {
+	if (cow == 1) { //меч
+		setTexturePos(sf::Vector2i(0, 280), sf::Vector2i(114, 29));
+		damage = 10;
+	}
+	if (cow == 2) { //бот
+		setTexturePos(sf::Vector2i(155, 345), sf::Vector2i(44, 34));
+		damage = 0;
+	}
+	if (cow == 3) { //€блоко
+		setTexturePos(sf::Vector2i(155, 270), sf::Vector2i(39, 49));
+		damage = 0;
+	}
+}
+
+std::list<Object*> objects;
+std::list<Object*>::iterator objIter;
+
+void Chest::chestOpening() {
+	isOpen = true;
+	setTexturePos(sf::Vector2i(890, 430), getSize());
+	objects.push_back(new Weapon(position, 2));
+}
+
+void Weapon::interaction(sf::Vector2f playerPos) {
+
+}
 
 class PassiveItem : public Object {
 
 };
+
