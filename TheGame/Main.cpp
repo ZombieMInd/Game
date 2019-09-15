@@ -89,10 +89,6 @@ int main()
 		for (iter = entities.begin(); iter != entities.end();) {
 			Entity *enemy = *iter;
 			enemy->update(time, player.getPos());
-<<<<<<< HEAD
-=======
-			//enemy->update(time, pos);
->>>>>>> origin/master
 			if (enemy->getHP() <= 0) {
 				iter = entities.erase(iter);
 				delete enemy;
