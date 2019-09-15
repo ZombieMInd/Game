@@ -19,7 +19,7 @@ int main()
 	Font font;
 	font.loadFromFile("assets/CyrilicOld.ttf");
 	Text text("", font, 32);
-	// как это работает?
+	// уже понял
 	for (int i = 0; i < HEIGHT_MAP; i++) {
 		for (int j = 0; j < WIDTH_MAP; j++) {
 			if ((TileMap[i][j] == 'e')) {
@@ -51,8 +51,6 @@ int main()
 		}
 		
 		window.clear();
-		//draw_map(s_map);
-		// прорисовка карты (в отдельный модуль)
 		for (int i = 0; i < HEIGHT_MAP; i++) {
 			for (int j = 0; j < WIDTH_MAP; j++) {
 				if (TileMap[i][j] == ' ') {
@@ -63,6 +61,9 @@ int main()
 				}
 				if ((TileMap[i][j] == '0')) {
 					s_map.setTextureRect(IntRect(890, 180, 94, 209));
+				}
+				if (TileMap[i][j] == 'b') {
+					s_map.setTextureRect(IntRect(0, 255, 94, 349));
 				}
 				s_map.setPosition(j * 94, i * 94);
 				window.draw(s_map);
