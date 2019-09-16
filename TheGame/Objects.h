@@ -8,15 +8,23 @@ private:
 	sf::String file;
 	sf::Texture texture;
 	sf::Sprite sprite;
-public:
+
+protected:
 	sf::Vector2f position;
+	sf::Font font;
 	sf::Text text;
+	sf::RenderWindow *wnd;
+public:
 	Object(sf::Vector2f pos, sf::Vector2i size);
 	~Object();
 	virtual void interaction(sf::Vector2f playerPos) = 0;
 	void setTexturePos(sf::Vector2i position, sf::Vector2i size);
 	float distanceTo(sf::Vector2f pos);
 	sf::Vector2i getSize();
+	void setWindow(sf::RenderWindow *window);
+	sf::Text * getText() {
+		return &text;
+	}
 };
 
 Object::Object(sf::Vector2f pos, sf::Vector2i s) {
@@ -45,8 +53,14 @@ float Object::distanceTo(sf::Vector2f pos) {
 	sf::Vector2f dir;
 	dir.x = pos.x - position.x;
 	dir.y = pos.y - position.y;
-	return sqrtf(dir.x * dir.x + dir.y * dir.y);
+	float tt= sqrtf(dir.x * dir.x + dir.y * dir.y);
+	return tt;
 }
+
+void Object::setWindow(sf::RenderWindow *window) {
+	wnd = window;
+}
+
 
 class Chest : public Object {
 	unsigned int classOfChest; //будут несколько типов сундуков
@@ -60,8 +74,11 @@ public:
 
 Chest::Chest(sf::Vector2f pos) :
 	Object(pos, sf::Vector2i(94, 94)) {
-	text.setString("");
-	isOpen = false;
+		font.loadFromFile("assets/CyrilicOld.ttf");
+		text.setFont(font);
+		text.setCharacterSize(32);
+		text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+		isOpen = false;
 }
 
 void Chest::interaction(sf::Vector2f playerPos) {
@@ -70,16 +87,21 @@ void Chest::interaction(sf::Vector2f playerPos) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
 		chestOpening();
 	}
-	text.setPosition(position.x + 45, position.y);
+	text.setPosition(position.x + 115, position.y+90);
+	wnd->draw(text);
 }
 
 void Chest::chestOpening() {
 	isOpen = true;
 	setTexturePos(sf::Vector2i(890, 430), getSize());
+	// мы сюда попадаем, но это не работает. чекни
+	// раньше мы из main это делали и в классе player было все прописано
+	//сейчас нет, посмотри это
+	//
 }
 
 void Chest::update(sf::Vector2f playerPos) {
-	if (distanceTo(playerPos) <= 150) {
+	if (distanceTo(playerPos) <= 175) {
 		interaction(playerPos);
 	}
 	else {

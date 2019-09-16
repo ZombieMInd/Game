@@ -28,7 +28,9 @@ int main()
 				entities.push_back(enemy);
 			}
 			if (TileMap[i][j] == 'b') {
-				chests.push_back(new Chest(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE)));
+				Chest *chest = new Chest(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE));
+				chest->setWindow(&window);
+				chests.push_back(chest);
 			}
 		}
 	}
@@ -70,19 +72,19 @@ int main()
 			}
 		}
 
-		text.setStyle(sf::Text::Bold | sf::Text::Underlined);
-		if (key) {
-			text.setString("Press (Z) to open this chest");
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-				player.opening_chest();
-			}
-		}
-		else {
-			text.setString("");
-		}
+		//if (key) {
+		//  text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+		//	text.setString("Press (Z) to open this chest");
+		//	text.setPosition(player.sprite.getPosition().x + 45, player.sprite.getPosition().y);
+		//	window.draw(text);
+		//	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+		//		player.opening_chest();
+		//	}
+		//}
+		//else {
+		//	text.setString("");
+		//}
 		key = false;
-		text.setPosition(player.sprite.getPosition().x + 45, player.sprite.getPosition().y);
-		window.draw(text);
 		window.setView(view);
 		
 		player.update(time, pos);
