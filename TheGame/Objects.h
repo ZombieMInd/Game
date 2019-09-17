@@ -64,11 +64,20 @@ public:
 	void update(sf::Vector2f playerPos);
 };
 
+std::list<Chest*> chests;
+std::list<Chest*>::iterator chestIter;
+
 Chest::Chest(sf::Vector2f pos) :
 	Object(pos, sf::Vector2i(94, 94)) {
 	setTexturePos(sf::Vector2i(890, 320), sf::Vector2i(94, 94));
-	text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+	text.setStyle(sf::Text::Bold);
 	text.setString("");
+	if (chests.size() == 1) { //первый или ближайший сундук всегда с оружием
+		classOfChest = 1;
+	}
+	else {
+		classOfChest = rand() % 2 + 1;
+	}
 	isOpen = false;
 }
 
@@ -83,7 +92,7 @@ void Chest::interaction(sf::Vector2f playerPos) {
 
 
 void Chest::update(sf::Vector2f playerPos) {
-	if (distanceTo(playerPos) <= 150) {
+	if (distanceTo(playerPos) <= 150 && isOpen == false) {
 		interaction(playerPos);
 	}
 	else {
@@ -91,8 +100,6 @@ void Chest::update(sf::Vector2f playerPos) {
 	}
 }
 
-std::list<Chest*> chests;
-std::list<Chest*>::iterator chestIter;
 
 class Weapon : public Object {
 	int classOfWeapon;
@@ -109,9 +116,9 @@ Weapon::Weapon(sf::Vector2f pos, int cow) :
 		setTexturePos(sf::Vector2i(0, 280), sf::Vector2i(114, 29));
 		damage = 10;
 	}
-	if (cow == 2) { //бот
-		setTexturePos(sf::Vector2i(155, 345), sf::Vector2i(44, 34));
-		damage = 0;
+	if (cow == 2) { //второй меч
+		setTexturePos(sf::Vector2i(5, 345), sf::Vector2i(109, 24));
+		damage = 7;
 	}
 	if (cow == 3) { //€блоко
 		setTexturePos(sf::Vector2i(155, 270), sf::Vector2i(39, 49));
@@ -125,14 +132,24 @@ std::list<Object*>::iterator objIter;
 void Chest::chestOpening() {
 	isOpen = true;
 	setTexturePos(sf::Vector2i(890, 430), getSize());
-	objects.push_back(new Weapon(position, 2));
+	int numOfItem = rand() % 2 + 1;
+	std::cout << classOfChest << " " << numOfItem << "\n";
+	if (classOfChest == 1) {
+		objects.push_back(new Weapon(position, numOfItem));
+	}
+	if (classOfChest == 2) {
+		objects.push_back(new Weapon(position, 3));
+	}
 }
 
 void Weapon::interaction(sf::Vector2f playerPos) {
 
 }
 
+
+
 class PassiveItem : public Object {
+private:
 
 };
 
