@@ -12,6 +12,7 @@ public:
 	sf::Sprite sprite;
 	sf::Vector2f position;
 	sf::Text text;
+	sf::Font font;
 	Object(sf::Vector2f pos, sf::Vector2i size);
 	~Object();
 	virtual void interaction(sf::Vector2f playerPos) = 0;
@@ -25,6 +26,10 @@ Object::Object(sf::Vector2f pos, sf::Vector2i s) {
 	sprite.setTexture(texture);
 	position = pos;
 	size = s;
+	font.loadFromFile("assets/CyrilicOld.ttf");
+	text.setFont(font);
+	text.setCharacterSize(32);
+	text.setPosition(pos);
 }
 
 Object::~Object() {
@@ -73,7 +78,6 @@ void Chest::interaction(sf::Vector2f playerPos) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
 		chestOpening();
 	}
-	text.setPosition(position.x + 45, position.y);
 }
 
 

@@ -92,6 +92,7 @@ int main()
 		window.setView(view);
 		
 		player.update(time, pos);
+		window.draw(player.sprite);
 
 		for (iter = entities.begin(); iter != entities.end();) {
 			Entity *enemy = *iter;
@@ -116,7 +117,7 @@ int main()
 
 		
 		
-		window.draw(player.sprite);
+		
 		window.display();
 	}
 	return EXIT_SUCCESS;
