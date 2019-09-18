@@ -100,6 +100,10 @@ void Chest::update(sf::Vector2f playerPos) {
 	}
 }
 
+struct Buff { //структура для определения бафа от предметов
+	int typeOfBuff; // будет несколько типов (увеличение скорости бега/атаки, увеличение хп и тд)
+	float buffScale; // нужно сделать документацию с подробными списками
+};
 
 class Weapon : public Object {
 	int classOfWeapon;
@@ -108,6 +112,15 @@ public:
 	void interaction(sf::Vector2f playerPos);
 	Weapon(sf::Vector2f position, int classOfWeapon);
 	//~Weapon();
+};
+
+class PassiveItem : public Object {
+private:
+	Buff buff;
+	int hpRegen;
+public:
+	PassiveItem(sf::Vector2f pos, int coi);
+	void interaction(sf::Vector2f playerPos);
 };
 
 Weapon::Weapon(sf::Vector2f pos, int cow) :
@@ -138,18 +151,47 @@ void Chest::chestOpening() {
 		objects.push_back(new Weapon(position, numOfItem));
 	}
 	if (classOfChest == 2) {
-		objects.push_back(new Weapon(position, 3));
+		objects.push_back(new PassiveItem(position, rand() % 3 + 1));
 	}
 }
 
 void Weapon::interaction(sf::Vector2f playerPos) {
-
+	if (distanceTo(playerPos) <= 150) {
+		text.setString("Press (Z) to take this weapon");
+	}
+	else {
+		text.setString("");
+	}
+	
 }
 
 
+PassiveItem::PassiveItem(sf::Vector2f pos, int coi):
+	Object(pos, sf::Vector2i(94, 94)) {
+	if (coi == 1) { //яблоко
+		setTexturePos(sf::Vector2i(155, 270), sf::Vector2i(39, 49));
+		hpRegen = 100;
+	}
+	if (coi == 2) { //сапог
+		setTexturePos(sf::Vector2i(155, 345), sf::Vector2i(44, 34));
+		buff.typeOfBuff = 1;//скорость+
+		buff.buffScale = 0.1f;
+	}
+	if (coi == 3) { //очки
+		setTexturePos(sf::Vector2i(235, 285), sf::Vector2i(59, 29));
+		buff.typeOfBuff = 2;//зрение+?
+		buff.buffScale = 0.1f;
+	}
+}
 
-class PassiveItem : public Object {
-private:
-
-};
-
+void PassiveItem::interaction(sf::Vector2f playerPos) {
+	if (distanceTo(playerPos) <= 150) {
+		text.setString("Press (Z) to take this item");
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+			//delete this;
+		}
+	}
+	else {
+		text.setString("");
+	}
+}

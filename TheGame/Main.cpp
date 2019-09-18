@@ -111,6 +111,13 @@ int main()
 			chestIter++;
 		}
 
+		for (objIter = objects.begin(); objIter != objects.end();) {
+			Object* obj = *objIter;
+			obj->interaction(player.getPos());
+			window.draw(obj->text);
+			objIter++;
+		}
+
 		for (auto ent : entities) {
 			window.draw(ent->sprite);
 		}
