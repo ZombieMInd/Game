@@ -21,6 +21,7 @@ public:
 	void getDamage(int damage);
 	int getHP();
 	void attackAnimation();
+	
 };
 
 Player::Player(sf::Vector2f pos, int health) :

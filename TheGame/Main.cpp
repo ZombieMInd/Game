@@ -113,6 +113,7 @@ int main()
 
 		for (objIter = objects.begin(); objIter != objects.end();) {
 			Object* obj = *objIter;
+
 			obj->interaction(player.getPos());
 			window.draw(obj->text);
 			objIter++;
