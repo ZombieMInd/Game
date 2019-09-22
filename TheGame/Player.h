@@ -1,5 +1,6 @@
 #pragma once
 #include "Entity.h"
+#include "Objects.h"
 
 class Player : public Entity {
 private:
@@ -9,7 +10,7 @@ private:
 	sf::Clock attackTimer; //таймер засекающий время между ударами
 	int attackSpeed; //кол-во милсек до следующего удара
 	int animationFrame;
-
+	float speedScale;
 public:
 	Player(sf::Vector2f pos, int health);
 	Player();
@@ -21,6 +22,9 @@ public:
 	void getDamage(int damage);
 	int getHP();
 	void attackAnimation();
+	void pickUpItem(PassiveItem* item);
+	void pickUpWeapon(Weapon* wep);
+	void displayStat();
 };
 
 Player::Player(sf::Vector2f pos, int health) :
@@ -31,6 +35,7 @@ Player::Player(sf::Vector2f pos, int health) :
 	attackSpeed = 600;
 	attackCircle = sf::Vector2f(0, 0);
 	animationFrame = 0;
+	speedScale = 1.0f;
 }
 
 Player::Player()
@@ -39,16 +44,16 @@ Player::Player()
 
 void Player::controle() {
 	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))) {
-		speed.y = -0.3f;
+		speed.y = -0.3f * speedScale;
 	}
 	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))) {
-		speed.y = 0.3f;
+		speed.y = 0.3f * speedScale;
 	}
 	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))) {
-		speed.x = -0.3f;
+		speed.x = -0.3f * speedScale;
 	}
 	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))) {
-		speed.x = 0.3f;
+		speed.x = 0.3f * speedScale;
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		int timePassed = attackTimer.getElapsedTime().asMilliseconds();
@@ -58,6 +63,9 @@ void Player::controle() {
 			//
 			std::cout << getAngel(sf::Vector2f(1000, 1000)) << " " << distanceTo(sf::Vector2f(1000, 1000)) << std::endl;
 		}
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) {
+		displayStat();
 	}
 }
 
@@ -178,4 +186,24 @@ void Player::attackAnimation() {
 		animationFrame = 0;
 		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
 	}
+}
+
+void Player::pickUpItem(PassiveItem* item) {
+	if (item->buff.typeOfBuff == 1) {
+		hp += item->buff.buffScale;
+	}
+	if (item->buff.typeOfBuff == 2) {
+		speedScale += item->buff.buffScale;
+	}
+	if (item->buff.typeOfBuff == 1) {
+		attackSpeed *= 1.0f + item->buff.buffScale;
+	}
+}
+
+void Player::pickUpWeapon(Weapon* wep) {
+	std::cout << "Weapon" << "\n";
+}
+
+void Player::displayStat() {
+	std::cout << "Speed: " << speedScale << "\nAttackSpeed: " << attackSpeed << "\nHP: " << hp << "\n";
 }

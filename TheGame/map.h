@@ -6,7 +6,7 @@ int map_i = 0;
 int map_j = 0;
 sf::String TileMap[HEIGHT_MAP] = {
 	"0000000000000000000000000000000000000000",
-	"0         b                     0  b   0",
+	"0         b b b bb  b b         0  b   0",
 	"0                        0      0      0",
 	"0                        0      0      0",
 	"0                        0      0000   0",
