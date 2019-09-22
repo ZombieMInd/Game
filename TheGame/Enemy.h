@@ -11,11 +11,9 @@ private:
 	String enemyType;
 	sf::Vector2f radiusAttack;// первое это длина прямоугольника который BadDog кусает, вторая это ширина
 	Player player;
-
 public:
 	Enemy(sf::Vector2f pos, int health, String type);
 	void update(float time, sf::Vector2f pos);
-	void runAnimation();
 	void behavior(sf::Vector2f playerPos);
 	void enemyInteractionWithMap(float x, float y, float dx, float dy);
 	void getDamage(int damage);
@@ -24,6 +22,8 @@ public:
 	int getHP();
 	void moveAnimation();
 };
+//std::list<Enemy*> enemies;
+//std::list<Enemy*>::iterator iter;
 
 
 Enemy::Enemy(sf::Vector2f pos, int health, String type) :
@@ -31,6 +31,8 @@ Enemy::Enemy(sf::Vector2f pos, int health, String type) :
 	hp = health;
 	enemyType = "BadDog";
 	setTexturePos(sf::Vector2i(10, 440), sf::Vector2i(154, 59));
+	//void enemyInteractionWithMap(float x, float y, float dx, float dy);
+	//void update(float time, sf::Vector2f pos);
 }
 
 void Enemy::setPlayer(Player player) {
@@ -39,17 +41,9 @@ void Enemy::setPlayer(Player player) {
 
 void Enemy::update(float time, sf::Vector2f playerPos) {
 	behavior(playerPos);
-	if (speed.x != 0 || speed.y != 0) {
-		runAnimation();
-		if (behaviorTimer.getElapsedTime().asMilliseconds() > 250) {
-			behaviorTimer.restart();
-		}
-	}
-
 	move(time);
 	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
 	textureRotate(playerPos);
-
 	//sprite.setColor(sf::Color(255, 255, 255, 255));
 	float damage = setEnemyAttack();
 	if (getAttacking()) {
@@ -57,7 +51,6 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 			(getAngel(sprite.getPosition()) < getDir() + radiusAttack.y) &&
 			(getAngel(sprite.getPosition()) > getDir() - radiusAttack.y)) {
 			player.getDamage(damage);
-			std::cout << damage;
 		}
 		//setAttacking(false);
 	}
@@ -153,22 +146,4 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 			radiusAttack = sf::Vector2f(80,45);
 		}
 		return realDam;
-	}
-	void Enemy::runAnimation() {
-		if (behaviorTimer.getElapsedTime().asMilliseconds() < 10) {
-			setTextureForAnimation(sf::Vector2i(200, 440), sf::Vector2i(154, 59));
-		}
-		if (behaviorTimer.getElapsedTime().asMilliseconds() > 50 &&
-			behaviorTimer.getElapsedTime().asMilliseconds() < 100) {
-			setTextureForAnimation(sf::Vector2i(370, 440), sf::Vector2i(154, 59));
-		}
-		if (behaviorTimer.getElapsedTime().asMilliseconds() > 100 &&
-			behaviorTimer.getElapsedTime().asMilliseconds() < 200) {
-			setTextureForAnimation(sf::Vector2i(560, 440), sf::Vector2i(154, 59));
-		}
-		if (behaviorTimer.getElapsedTime().asMilliseconds() > 200 &&
-			behaviorTimer.getElapsedTime().asMilliseconds() < 250) {
-			setTextureForAnimation(sf::Vector2i(10, 440), sf::Vector2i(154, 59));
-		}
-
 	}

@@ -53,8 +53,8 @@ public:
 std::list<Entity*> entities;
 std::list<Entity*>::iterator iter;
 
-Entity::Entity(){
-
+Entity::Entity()
+{
 }
 
 Entity::Entity(sf::Vector2f pos, sf::Vector2f s, sf::String f)
@@ -72,8 +72,8 @@ Entity::Entity(sf::Vector2f pos, sf::Vector2f s, sf::String f)
 }
 
 
-Entity::~Entity(){
-	delete this;
+Entity::~Entity()
+{
 }
 
 void Entity::setTexturePos(sf::Vector2i pos, sf::Vector2i size) {
