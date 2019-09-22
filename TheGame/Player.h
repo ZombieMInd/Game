@@ -22,9 +22,13 @@ public:
 	void getDamage(int damage);
 	int getHP();
 	void attackAnimation();
+<<<<<<< HEAD
 	void pickUpItem(PassiveItem* item);
 	void pickUpWeapon(Weapon* wep);
 	void displayStat();
+=======
+	
+>>>>>>> 96ee4879fd6d3c286bee76bf7f504ecc4de9160a
 };
 
 Player::Player(sf::Vector2f pos, int health) :
