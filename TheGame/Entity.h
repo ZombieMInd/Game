@@ -41,7 +41,7 @@ public:
 	bool getAttacking();
 	void setAttacking(bool isAttacking);
 	sf::FloatRect getRect();
-	virtual void getDamage(int damage) = 0;
+	virtual void makeDamage(int damage) = 0;
 	virtual int getHP() = 0;
 	float getAngel(sf::Vector2f pos);
 	sf::Vector2f getSpeed(sf::Vector2f pos);
@@ -73,6 +73,10 @@ Entity::Entity(sf::Vector2f pos, sf::Vector2f s, sf::String f)
 
 
 Entity::~Entity(){
+<<<<<<< HEAD
+=======
+	//delete this;
+>>>>>>> origin/enemyattack
 }
 
 void Entity::setTexturePos(sf::Vector2i pos, sf::Vector2i size) {
