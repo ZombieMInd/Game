@@ -10,7 +10,7 @@ private:
 	sf::Clock  behaviorTimer;
 	String enemyType;
 	sf::Vector2f radiusAttack;// первое это длина прямоугольника который BadDog кусает, вторая это ширина
-	Player player;
+	Player *player;
 
 public:
 	Enemy(sf::Vector2f pos, int health, String type);
@@ -18,8 +18,8 @@ public:
 	void runAnimation();
 	void behavior(sf::Vector2f playerPos);
 	void enemyInteractionWithMap(float x, float y, float dx, float dy);
-	void getDamage(int damage);
-	void setPlayer(Player player);
+	void makeDamage(int damage);
+	void setPlayer(Player *player);
 	int setEnemyAttack();
 	int getHP();
 	void moveAnimation();
@@ -33,7 +33,7 @@ Enemy::Enemy(sf::Vector2f pos, int health, String type) :
 	setTexturePos(sf::Vector2i(10, 440), sf::Vector2i(154, 59));
 }
 
-void Enemy::setPlayer(Player player) {
+void Enemy::setPlayer(Player *player) {
 	this->player = player;
 }
 
@@ -45,21 +45,20 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 			behaviorTimer.restart();
 		}
 	}
-
 	move(time);
 	enemyInteractionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
 	textureRotate(playerPos);
-
 	//sprite.setColor(sf::Color(255, 255, 255, 255));
 	float damage = setEnemyAttack();
 	if (getAttacking()) {
-		if ((distanceTo(sprite.getPosition()) <= radiusAttack.x) &&
-			(getAngel(sprite.getPosition()) < getDir() + radiusAttack.y) &&
-			(getAngel(sprite.getPosition()) > getDir() - radiusAttack.y)) {
-			player.getDamage(damage);
-			std::cout << damage;
+		if ((distanceTo(sprite.getPosition()) <= radiusAttack.x)) {
+			if (attackTimer.getElapsedTime().asMilliseconds() > 300) {
+				player->makeDamage(damage * 10);
+				std::cout << damage * 10 << " " << player->getHP() << std::endl;
+				attackTimer.restart();
+			}
 		}
-		//setAttacking(false);
+		setAttacking(false);
 	}
 }
 
@@ -79,6 +78,8 @@ void Enemy::behavior(sf::Vector2f playerPos) {
 	else if (distanceTo(playerPos) <= 120) {
 		speed.x = 0;
 		speed.y = 0;
+		setAttacking(true);
+		attackTimer.getElapsedTime().asMilliseconds();
 	}
 }
 
@@ -129,7 +130,7 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 	speed.y = 0;
 }
 
-	void Enemy::getDamage(int damage) {
+	void Enemy::makeDamage(int damage) {
 		hp -= damage;
 		sprite.setColor(sf::Color(255, 0, 0, 100));
 		std::cout << damage << std::endl;
@@ -150,24 +151,24 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 		int realDam = 0;
 		if (enemyType == "BadDog") {
 			realDam = 1;
-			radiusAttack = sf::Vector2f(80,45);
+			radiusAttack = sf::Vector2f(80,5);
 		}
 		return realDam;
 	}
 	void Enemy::runAnimation() {
-		if (behaviorTimer.getElapsedTime().asMilliseconds() < 10) {
+		if (behaviorTimer.getElapsedTime().asMilliseconds() < 20) {
 			setTextureForAnimation(sf::Vector2i(200, 440), sf::Vector2i(154, 59));
-		}
-		if (behaviorTimer.getElapsedTime().asMilliseconds() > 50 &&
-			behaviorTimer.getElapsedTime().asMilliseconds() < 100) {
-			setTextureForAnimation(sf::Vector2i(370, 440), sf::Vector2i(154, 59));
 		}
 		if (behaviorTimer.getElapsedTime().asMilliseconds() > 100 &&
 			behaviorTimer.getElapsedTime().asMilliseconds() < 200) {
-			setTextureForAnimation(sf::Vector2i(560, 440), sf::Vector2i(154, 59));
+			setTextureForAnimation(sf::Vector2i(370, 440), sf::Vector2i(154, 59));
 		}
 		if (behaviorTimer.getElapsedTime().asMilliseconds() > 200 &&
-			behaviorTimer.getElapsedTime().asMilliseconds() < 250) {
+			behaviorTimer.getElapsedTime().asMilliseconds() < 400) {
+			setTextureForAnimation(sf::Vector2i(560, 440), sf::Vector2i(154, 59));
+		}
+		if (behaviorTimer.getElapsedTime().asMilliseconds() > 400 &&
+			behaviorTimer.getElapsedTime().asMilliseconds() < 500) {
 			setTextureForAnimation(sf::Vector2i(10, 440), sf::Vector2i(154, 59));
 		}
 

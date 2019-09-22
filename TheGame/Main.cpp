@@ -24,7 +24,7 @@ int main()
 		for (int j = 0; j < WIDTH_MAP; j++) {
 			if ((TileMap[i][j] == 'e')) {
 				Enemy *enemy = new Enemy(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE), 100, " ");
-				enemy->setPlayer(player);
+				enemy->setPlayer(&player);
 				entities.push_back(enemy);
 			}
 			if (TileMap[i][j] == 'b') {
@@ -79,76 +79,65 @@ int main()
 			window.draw(wep->sprite);
 		}
 
-		
-		/*if (key) {
-			text.setString("Press (Z) to open this chest");
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-				player.opening_chest();
+		window.setView(view);
+		if (player.isAlive()) {
+			player.update(time, pos);
+			window.draw(player.sprite);
+
+			for (iter = entities.begin(); iter != entities.end();) {
+				Entity *enemy = *iter;
+				enemy->update(time, player.getPos());
+				if (enemy->getHP() <= 0) {
+					iter = entities.erase(iter);
+					delete enemy;
+				}
+				else iter++;
+			}
+
+			for (chestIter = chests.begin(); chestIter != chests.end();) {
+				Chest* chest = *chestIter;
+				chest->update(player.getPos());
+				window.draw(chest->text);
+				chestIter++;
+			}
+
+			for (wepIter = weapons.begin(); wepIter != weapons.end();) {
+				Weapon* wep = *wepIter;
+				wep->interaction(player.getPos());
+				if (wep->isPickedUp) {
+					player.pickUpWeapon(wep);
+					wepIter = weapons.erase(wepIter);
+					delete wep;
+				}
+				else {
+					window.draw(wep->text);
+					wepIter++;
+				}
+			}
+
+			for (itemIter = items.begin(); itemIter != items.end();) {
+				PassiveItem* item = *itemIter;
+				item->interaction(player.getPos());
+				if (item->isPickedUp) {
+					player.pickUpItem(item);
+					itemIter = items.erase(itemIter);
+					delete item;
+				}
+				else {
+					window.draw(item->text);
+					itemIter++;
+				}
 			}
 		}
 		else {
-			text.setString("");
-		}
-		key = false;
-		text.setPosition(player.sprite.getPosition().x + 45, player.sprite.getPosition().y);
-		window.draw(text);*/
-		window.setView(view);
-		
-		player.update(time, pos);
-		window.draw(player.sprite);
-
-		for (iter = entities.begin(); iter != entities.end();) {
-			Entity *enemy = *iter;
-			enemy->update(time, player.getPos());
-			if (enemy->getHP() <= 0) {
-				iter = entities.erase(iter);
-				delete enemy;
-			}
-			else iter++;
-		}
-
-		for (chestIter = chests.begin(); chestIter != chests.end();) {
-			Chest* chest = *chestIter;
-			chest->update(player.getPos());
-			window.draw(chest->text);
-			chestIter++;
-		}
-
-		for (wepIter = weapons.begin(); wepIter != weapons.end();) {
-			Weapon* wep = *wepIter;
-			wep->interaction(player.getPos());
-			if (wep->isPickedUp) {
-				player.pickUpWeapon(wep);
-				wepIter = weapons.erase(wepIter);
-				delete wep;
-			}
-			else {
-				window.draw(wep->text);
-				wepIter++;
-			}
-		}
-
-		for (itemIter = items.begin(); itemIter != items.end();) {
-			PassiveItem* item = *itemIter;
-			item->interaction(player.getPos());
-			if (item->isPickedUp) {
-				player.pickUpItem(item);
-				itemIter = items.erase(itemIter);
-				delete item;
-			}
-			else {
-				window.draw(item->text);
-				itemIter++;
-			}
+			std::cout << "рш слеп! GAME OVER";
+			//system("pause");
+			//return 0;
 		}
 
 		for (auto ent : entities) {
 			window.draw(ent->sprite);
 		}
-
-		
-		
-		
 		window.display();
 	}
 	return EXIT_SUCCESS;
