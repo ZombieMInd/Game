@@ -114,7 +114,6 @@ int main()
 			chestIter++;
 		}
 
-<<<<<<< HEAD
 		for (wepIter = weapons.begin(); wepIter != weapons.end();) {
 			Weapon* wep = *wepIter;
 			wep->interaction(player.getPos());
@@ -141,14 +140,6 @@ int main()
 				window.draw(item->text);
 				itemIter++;
 			}
-=======
-		for (objIter = objects.begin(); objIter != objects.end();) {
-			Object* obj = *objIter;
-
-			obj->interaction(player.getPos());
-			window.draw(obj->text);
-			objIter++;
->>>>>>> 96ee4879fd6d3c286bee76bf7f504ecc4de9160a
 		}
 
 		for (auto ent : entities) {
