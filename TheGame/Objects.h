@@ -98,7 +98,7 @@ void Chest::interaction(sf::Vector2f playerPos) {
 
 
 void Chest::update(sf::Vector2f playerPos) {
-	if (distanceTo(playerPos) <= 150 && isOpen == false) {
+	if (distanceTo(playerPos) <= 100 && isOpen == false) {
 		interaction(playerPos);
 	}
 	else {
