@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include "Objects.h"
+#include "Enemy.h"
 using namespace sf;
 
 
@@ -72,8 +72,11 @@ int main()
 		for (auto chest : chests) {
 			window.draw(chest->sprite);
 		}
-		for (auto obj : objects) {
-			window.draw(obj->sprite);
+		for (auto item : items) {
+			window.draw(item->sprite);
+		}
+		for (auto wep : weapons) {
+			window.draw(wep->sprite);
 		}
 
 		
@@ -111,11 +114,32 @@ int main()
 			chestIter++;
 		}
 
-		for (objIter = objects.begin(); objIter != objects.end();) {
-			Object* obj = *objIter;
-			obj->interaction(player.getPos());
-			window.draw(obj->text);
-			objIter++;
+		for (wepIter = weapons.begin(); wepIter != weapons.end();) {
+			Weapon* wep = *wepIter;
+			wep->interaction(player.getPos());
+			if (wep->isPickedUp) {
+				player.pickUpWeapon(wep);
+				wepIter = weapons.erase(wepIter);
+				delete wep;
+			}
+			else {
+				window.draw(wep->text);
+				wepIter++;
+			}
+		}
+
+		for (itemIter = items.begin(); itemIter != items.end();) {
+			PassiveItem* item = *itemIter;
+			item->interaction(player.getPos());
+			if (item->isPickedUp) {
+				player.pickUpItem(item);
+				itemIter = items.erase(itemIter);
+				delete item;
+			}
+			else {
+				window.draw(item->text);
+				itemIter++;
+			}
 		}
 
 		for (auto ent : entities) {

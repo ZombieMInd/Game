@@ -1,5 +1,5 @@
 #pragma once
-#include "Enemy.h"
+//#include "Enemy.h"
 
 class Object {
 private:
@@ -9,6 +9,7 @@ private:
 	sf::Texture texture;
 	
 public:
+	bool isPickedUp;
 	sf::Sprite sprite;
 	sf::Vector2f position;
 	sf::Text text;
@@ -30,6 +31,7 @@ Object::Object(sf::Vector2f pos, sf::Vector2i s) {
 	text.setFont(font);
 	text.setCharacterSize(32);
 	text.setPosition(pos);
+	bool isPickedUp = false;
 }
 
 Object::~Object() {
@@ -57,8 +59,11 @@ float Object::distanceTo(sf::Vector2f pos) {
 class Chest : public Object {
 	unsigned int classOfChest; //будут несколько типов сундуков
 	bool isOpen;
+	bool isGained;
+	sf::Clock openTimer;
 public:
 	Chest(sf::Vector2f position);
+	void objectGain();
 	void interaction(sf::Vector2f playerPos);
 	void chestOpening();
 	void update(sf::Vector2f playerPos);
@@ -79,6 +84,7 @@ Chest::Chest(sf::Vector2f pos) :
 		classOfChest = rand() % 2 + 1;
 	}
 	isOpen = false;
+	isGained = false;
 }
 
 void Chest::interaction(sf::Vector2f playerPos) {
@@ -98,6 +104,9 @@ void Chest::update(sf::Vector2f playerPos) {
 	else {
 		text.setString("");
 	}
+	if (openTimer.getElapsedTime().asMilliseconds() >= 500 && isOpen && isGained == false) {
+		objectGain();
+	}
 }
 
 struct Buff { //структура для определения бафа от предметов
@@ -111,14 +120,14 @@ class Weapon : public Object {
 public:
 	void interaction(sf::Vector2f playerPos);
 	Weapon(sf::Vector2f position, int classOfWeapon);
-	//~Weapon();
+	~Weapon();
 };
 
 class PassiveItem : public Object {
 private:
-	Buff buff;
-	int hpRegen;
 public:
+	~PassiveItem();
+	Buff buff;
 	PassiveItem(sf::Vector2f pos, int coi);
 	void interaction(sf::Vector2f playerPos);
 };
@@ -137,27 +146,42 @@ Weapon::Weapon(sf::Vector2f pos, int cow) :
 		setTexturePos(sf::Vector2i(155, 270), sf::Vector2i(39, 49));
 		damage = 0;
 	}
+	isPickedUp = false;
 }
 
-std::list<Object*> objects;
-std::list<Object*>::iterator objIter;
+Weapon::~Weapon() {
+	std::cout << "Weapon destroyed!";
+}
+
+std::list<Weapon*> weapons;
+std::list<Weapon*>::iterator wepIter;
+std::list<PassiveItem*> items;
+std::list<PassiveItem*>::iterator itemIter;
 
 void Chest::chestOpening() {
 	isOpen = true;
 	setTexturePos(sf::Vector2i(890, 430), getSize());
+	openTimer.restart();
+}
+
+void Chest::objectGain() {
 	int numOfItem = rand() % 2 + 1;
 	std::cout << classOfChest << " " << numOfItem << "\n";
 	if (classOfChest == 1) {
-		objects.push_back(new Weapon(position, numOfItem));
+		weapons.push_back(new Weapon(position, numOfItem));
 	}
 	if (classOfChest == 2) {
-		objects.push_back(new PassiveItem(position, rand() % 3 + 1));
+		items.push_back(new PassiveItem(position, rand() % 3 + 1));
 	}
+	isGained = true;
 }
 
 void Weapon::interaction(sf::Vector2f playerPos) {
 	if (distanceTo(playerPos) <= 150) {
 		text.setString("Press (Z) to take this weapon");
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+			isPickedUp = true;
+		}
 	}
 	else {
 		text.setString("");
@@ -170,25 +194,32 @@ PassiveItem::PassiveItem(sf::Vector2f pos, int coi):
 	Object(pos, sf::Vector2i(94, 94)) {
 	if (coi == 1) { //яблоко
 		setTexturePos(sf::Vector2i(155, 270), sf::Vector2i(39, 49));
-		hpRegen = 100;
+		buff.typeOfBuff = 1;
+		buff.buffScale = 100;
 	}
 	if (coi == 2) { //сапог
 		setTexturePos(sf::Vector2i(155, 345), sf::Vector2i(44, 34));
-		buff.typeOfBuff = 1;//скорость+
+		buff.typeOfBuff = 2;//скорость+
 		buff.buffScale = 0.1f;
 	}
 	if (coi == 3) { //очки
 		setTexturePos(sf::Vector2i(235, 285), sf::Vector2i(59, 29));
-		buff.typeOfBuff = 2;//зрение+?
+		buff.typeOfBuff = 3;//зрение+?
 		buff.buffScale = 0.1f;
 	}
+	isPickedUp = false;
+}
+
+PassiveItem::~PassiveItem() {
+	std::cout << "Object destroyed" << "\n";
+	//delete this;
 }
 
 void PassiveItem::interaction(sf::Vector2f playerPos) {
 	if (distanceTo(playerPos) <= 150) {
 		text.setString("Press (Z) to take this item");
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-			//delete this;
+			isPickedUp = true;
 		}
 	}
 	else {
