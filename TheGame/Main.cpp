@@ -4,6 +4,7 @@
 using namespace sf;
 
 
+
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
@@ -19,6 +20,9 @@ int main()
 	Font font;
 	font.loadFromFile("assets/CyrilicOld.ttf");
 	Text text("", font, 32);
+	text.setFont(font);
+	text.setCharacterSize(40);
+	text.setPosition(view.getCenter());
 	// как это работает?
 	for (int i = 0; i < HEIGHT_MAP; i++) {
 		for (int j = 0; j < WIDTH_MAP; j++) {
@@ -130,7 +134,15 @@ int main()
 			}
 		}
 		else {
-			std::cout << "ТЫ УМЕР! GAME OVER";
+			text.setString("GAME OVER! press r to restart");
+			window.draw(text);
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+				
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+				window.close();
+			}
+			//std::cout << "ТЫ УМЕР! GAME OVER";
 			//system("pause");
 			//return 0;
 		}

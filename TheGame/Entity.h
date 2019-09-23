@@ -73,10 +73,7 @@ Entity::Entity(sf::Vector2f pos, sf::Vector2f s, sf::String f)
 
 
 Entity::~Entity(){
-<<<<<<< HEAD
-=======
-	//delete this;
->>>>>>> origin/enemyattack
+
 }
 
 void Entity::setTexturePos(sf::Vector2i pos, sf::Vector2i size) {

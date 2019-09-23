@@ -14,6 +14,7 @@ private:
 public:
 	Player(sf::Vector2f pos, int health);
 	Player();
+	~Player();
 	void controle();
 	void update(float time, sf::Vector2f pos);
 	void interactionWithMap(float x, float y, float dx, float dy);
@@ -41,6 +42,11 @@ Player::Player(sf::Vector2f pos, int health) :
 
 Player::Player()
 {
+}
+
+Player::~Player()
+{
+
 }
 
 void Player::controle() {
