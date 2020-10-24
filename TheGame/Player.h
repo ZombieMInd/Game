@@ -14,17 +14,19 @@ private:
 public:
 	Player(sf::Vector2f pos, int health);
 	Player();
+	~Player();
 	void controle();
 	void update(float time, sf::Vector2f pos);
 	void interactionWithMap(float x, float y, float dx, float dy);
 	void opening_chest();
 	void setAttackCircle();
-	void getDamage(int damage);
+	void makeDamage(int damage);
 	int getHP();
 	void attackAnimation();
 	void pickUpItem(PassiveItem* item);
 	void pickUpWeapon(Weapon* wep);
 	void displayStat();
+	bool isAlive();
 };
 
 Player::Player(sf::Vector2f pos, int health) :
@@ -40,6 +42,11 @@ Player::Player(sf::Vector2f pos, int health) :
 
 Player::Player()
 {
+}
+
+Player::~Player()
+{
+
 }
 
 void Player::controle() {
@@ -82,9 +89,8 @@ void Player::update(float time, sf::Vector2f pos) {
 			if (distanceTo(ent->getPos()) <= attackCircle.x &&
 				getAngel(ent->getPos()) < getDir() + attackCircle.y &&
 				getAngel(ent->getPos()) > getDir() - attackCircle.y)
-				//std::cout << getRect().left << " " << getRect().top << " " << 
-				//getRect().height << " " << getRect().width << std::endl;
-				ent->getDamage(10);
+				ent->makeDamage(10);
+				std::cout << ent->getHP() << std::endl;
 		}
 		setAttacking(false);
 	}
@@ -153,7 +159,7 @@ void Player::setAttackCircle() {
 		attackCircle = sf::Vector2f(150, 60);
 }
 
-void Player::getDamage(int damage) {
+void Player::makeDamage(int damage) {
 	hp -= damage;
 	sprite.setColor(sf::Color(255, 0, 0, 100));
 }
@@ -165,27 +171,23 @@ int Player::getHP() {
 void Player::attackAnimation() {
 	if (attackTimer.getElapsedTime().asMilliseconds() < 10) {
 		animationFrame = 1;
-		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
 	}
 	if (attackTimer.getElapsedTime().asMilliseconds() > 50 &&
 		attackTimer.getElapsedTime().asMilliseconds() < 100) {
 		animationFrame = 2;
-		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
 	}
 	if (attackTimer.getElapsedTime().asMilliseconds() > 100 &&
 		attackTimer.getElapsedTime().asMilliseconds() < 200) {
 		animationFrame = 3;
-		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
 	}
 	if (attackTimer.getElapsedTime().asMilliseconds() > 200 &&
 		attackTimer.getElapsedTime().asMilliseconds() < 250) {
 		animationFrame = 4;
-		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
 	}
 	if (attackTimer.getElapsedTime().asMilliseconds() > 250) {
 		animationFrame = 0;
-		setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
 	}
+	setTextureForAnimation(sf::Vector2i(145 * animationFrame, 0), sf::Vector2i(137, 254));
 }
 
 void Player::pickUpItem(PassiveItem* item) {
@@ -206,4 +208,7 @@ void Player::pickUpWeapon(Weapon* wep) {
 
 void Player::displayStat() {
 	std::cout << "Speed: " << speedScale << "\nAttackSpeed: " << attackSpeed << "\nHP: " << hp << "\n";
+}
+bool Player::isAlive() {
+	return hp > 0;
 }
