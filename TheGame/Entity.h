@@ -71,7 +71,6 @@ Entity::Entity(sf::Vector2f pos, sf::Vector2f s, sf::String f)
 	attacking = false;
 }
 
-
 Entity::~Entity(){
 
 }
@@ -95,7 +94,6 @@ void Entity::textureRotate(sf::Vector2f pos) {
 		dir = rotation;
 	}
 }
-
 
 void Entity::move(float time) {
 	position.x += speed.x * time;

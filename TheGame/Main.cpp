@@ -1,12 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Enemy.h"
+#include "Game.h"
 using namespace sf;
 
+int main(){
 
-
-int main()
-{
 	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
 	float CurrentFrame = 0;
 	sf::Clock clock;
@@ -38,8 +37,8 @@ int main()
 	}
 	
 
-	while (window.isOpen())
-	{
+	while (window.isOpen()){
+
 		//для плавности и контроля игрока
 		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
@@ -47,10 +46,9 @@ int main()
 		sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
 		sf::Vector2f pos = window.mapPixelToCoords(pixelPos);
 
-
 		sf::Event event;
-		while (window.pollEvent(event))
-		{
+		while (window.pollEvent(event)){
+
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
@@ -73,6 +71,7 @@ int main()
 				window.draw(s_map);
 			}
 		}
+
 		for (auto chest : chests) {
 			window.draw(chest->sprite);
 		}
@@ -135,9 +134,10 @@ int main()
 		}
 		else {
 			text.setString("GAME OVER! press r to restart");
+			text.setPosition(view.getCenter());
 			window.draw(text);
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
-				
+				std::cout << "lol";
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 				window.close();

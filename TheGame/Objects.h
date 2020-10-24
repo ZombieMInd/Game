@@ -200,7 +200,7 @@ PassiveItem::PassiveItem(sf::Vector2f pos, int coi):
 	if (coi == 2) { //сапог
 		setTexturePos(sf::Vector2i(155, 345), sf::Vector2i(44, 34));
 		buff.typeOfBuff = 2;//скорость+
-		buff.buffScale = 0.1f;
+		buff.buffScale = 0.5f;
 	}
 	if (coi == 3) { //очки
 		setTexturePos(sf::Vector2i(235, 285), sf::Vector2i(59, 29));
