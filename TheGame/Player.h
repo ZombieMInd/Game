@@ -90,7 +90,7 @@ void Player::update(float time, sf::Vector2f pos) {
 				getAngel(ent->getPos()) < getDir() + attackCircle.y &&
 				getAngel(ent->getPos()) > getDir() - attackCircle.y)
 				ent->makeDamage(10);
-				std::cout << ent->getHP() << std::endl;
+			std::cout << ent->getHP() << std::endl;
 		}
 		setAttacking(false);
 	}

@@ -25,7 +25,6 @@ public:
 	void moveAnimation();
 };
 
-
 Enemy::Enemy(sf::Vector2f pos, int health, String type) :
 	Entity(pos, sf::Vector2f(154, 59), "G_v06.png") {
 	hp = health;
@@ -130,46 +129,46 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 	speed.y = 0;
 }
 
-	void Enemy::makeDamage(int damage) {
-		hp -= damage;
-		sprite.setColor(sf::Color(255, 0, 0, 100));
-		std::cout << damage << std::endl;
+void Enemy::makeDamage(int damage) {
+	hp -= damage;
+	sprite.setColor(sf::Color(255, 0, 0, 100));
+	std::cout << damage << std::endl;
+}
+
+int Enemy::getHP() {
+	return hp;
+}
+
+
+void Enemy::moveAnimation() {
+
+}
+
+//определение атаки в зависимости от Enemy; будет умножаться на 10+;ну и радиус поражения в зависимости
+// от Enemy  тоже разный
+int Enemy::setEnemyAttack() {
+	int realDam = 0;
+	if (enemyType == "BadDog") {
+		realDam = 1;
+		radiusAttack = sf::Vector2f(80, 5);
+	}
+	return realDam;
+}
+void Enemy::runAnimation() {
+	if (behaviorTimer.getElapsedTime().asMilliseconds() < 20) {
+		setTextureForAnimation(sf::Vector2i(200, 440), sf::Vector2i(154, 59));
+	}
+	if (behaviorTimer.getElapsedTime().asMilliseconds() > 100 &&
+		behaviorTimer.getElapsedTime().asMilliseconds() < 200) {
+		setTextureForAnimation(sf::Vector2i(370, 440), sf::Vector2i(154, 59));
+	}
+	if (behaviorTimer.getElapsedTime().asMilliseconds() > 200 &&
+		behaviorTimer.getElapsedTime().asMilliseconds() < 400) {
+		setTextureForAnimation(sf::Vector2i(560, 440), sf::Vector2i(154, 59));
+	}
+	if (behaviorTimer.getElapsedTime().asMilliseconds() > 400 &&
+		behaviorTimer.getElapsedTime().asMilliseconds() < 500) {
+		setTextureForAnimation(sf::Vector2i(10, 440), sf::Vector2i(154, 59));
 	}
 
-	int Enemy::getHP() {
-		return hp;
-	}
-
-
-	void Enemy::moveAnimation() {
-
-	}
-
-	//определение атаки в зависимости от Enemy; будет умножаться на 10+;ну и радиус поражения в зависимости
-	// от Enemy  тоже разный
-	int Enemy::setEnemyAttack() {
-		int realDam = 0;
-		if (enemyType == "BadDog") {
-			realDam = 1;
-			radiusAttack = sf::Vector2f(80,5);
-		}
-		return realDam;
-	}
-	void Enemy::runAnimation() {
-		if (behaviorTimer.getElapsedTime().asMilliseconds() < 20) {
-			setTextureForAnimation(sf::Vector2i(200, 440), sf::Vector2i(154, 59));
-		}
-		if (behaviorTimer.getElapsedTime().asMilliseconds() > 100 &&
-			behaviorTimer.getElapsedTime().asMilliseconds() < 200) {
-			setTextureForAnimation(sf::Vector2i(370, 440), sf::Vector2i(154, 59));
-		}
-		if (behaviorTimer.getElapsedTime().asMilliseconds() > 200 &&
-			behaviorTimer.getElapsedTime().asMilliseconds() < 400) {
-			setTextureForAnimation(sf::Vector2i(560, 440), sf::Vector2i(154, 59));
-		}
-		if (behaviorTimer.getElapsedTime().asMilliseconds() > 400 &&
-			behaviorTimer.getElapsedTime().asMilliseconds() < 500) {
-			setTextureForAnimation(sf::Vector2i(10, 440), sf::Vector2i(154, 59));
-		}
-
-	}
+}

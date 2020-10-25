@@ -1,11 +1,12 @@
 #pragma once
 #include <iostream>
+//#include "Player.h"
 using namespace std;
 class Game{
 private:
 	string state;
 	int lvl;
-	Player player;
+	//Player player;
 public:
 	Game();
 	~Game();

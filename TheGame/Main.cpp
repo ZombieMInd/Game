@@ -1,7 +1,8 @@
+#pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Enemy.h"
-#include "Game.h"
+//#include "Game.h"
 using namespace sf;
 
 int main(){
