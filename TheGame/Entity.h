@@ -11,8 +11,8 @@ const int BLOCK_SIZE = 94;
 bool key = false;
 
 const float PLAYER_SCALE = 0.8f;
-class Entity
-{
+class Entity{
+private:
 	sf::Vector2f position;
 	sf::Vector2i size;
 	sf::Vector2f realSize;
@@ -53,7 +53,7 @@ public:
 std::list<Entity*> entities;
 std::list<Entity*>::iterator iter;
 
-Entity::Entity(){
+Entity::Entity() {
 
 }
 
@@ -71,7 +71,7 @@ Entity::Entity(sf::Vector2f pos, sf::Vector2f s, sf::String f)
 	attacking = false;
 }
 
-Entity::~Entity(){
+Entity::~Entity() {
 
 }
 
