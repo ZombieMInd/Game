@@ -1,13 +1,14 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include "Enemy.h"
-//#include "Game.h"
+//#include <SFML/Graphics.hpp>
+//#include <SFML/Audio.hpp>
+//#include "Enemy.h"
+#include "Game.h"
+
 using namespace sf;
 
 int main(){
 
-	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
+	sf::RenderWindow window(sf::VideoMode(800, 600), "Kill all bad dogs 2");
 	float CurrentFrame = 0;
 	sf::Clock clock;
 	Player player(sf::Vector2f(200, 200), 100);
