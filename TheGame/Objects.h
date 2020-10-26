@@ -61,23 +61,23 @@ class Chest : public Object {
 	bool isOpen;
 	bool isGained;
 	sf::Clock openTimer;
+	int chestSize;
 public:
 	Chest(sf::Vector2f position);
 	void objectGain();
 	void interaction(sf::Vector2f playerPos);
 	void chestOpening();
 	void update(sf::Vector2f playerPos);
+	void setChestSize(int);
 };
 
-std::list<Chest*> chests;
-std::list<Chest*>::iterator chestIter;
 
 Chest::Chest(sf::Vector2f pos) :
 	Object(pos, sf::Vector2i(94, 94)) {
 	setTexturePos(sf::Vector2i(890, 320), sf::Vector2i(94, 94));
 	text.setStyle(sf::Text::Bold);
 	text.setString("");
-	if (chests.size() == 1) { //первый или ближайший сундук всегда с оружием
+	if (chestSize == 1) { //первый или ближайший сундук всегда с оружием
 		classOfChest = 1;
 	}
 	else {
@@ -96,7 +96,9 @@ void Chest::interaction(sf::Vector2f playerPos) {
 }
 
 
-
+void Chest::setChestSize(int size) {
+	chestSize = size;
+}
 void Chest::update(sf::Vector2f playerPos) {
 	if (distanceTo(playerPos) <= 100 && isOpen == false) {
 		interaction(playerPos);

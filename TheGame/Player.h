@@ -11,6 +11,7 @@ private:
 	int attackSpeed; //кол-во милсек до следующего удара
 	int animationFrame;
 	float speedScale;
+	std::list<Entity*> entities;
 public:
 	Player(sf::Vector2f pos, int health);
 	Player();
@@ -27,6 +28,7 @@ public:
 	void pickUpWeapon(Weapon* wep);
 	void displayStat();
 	bool isAlive();
+	void setEntities(std::list<Entity*> entities);
 };
 
 Player::Player(sf::Vector2f pos, int health) :
@@ -211,4 +213,8 @@ void Player::displayStat() {
 }
 bool Player::isAlive() {
 	return hp > 0;
+}
+
+void Player::setEntities(std::list<Entity*> entities) {
+	this->entities = entities;
 }

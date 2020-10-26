@@ -50,8 +50,6 @@ public:
 	void setOrigin(float x, float y);
 };
 
-std::list<Entity*> entities;
-std::list<Entity*>::iterator iter;
 
 Entity::Entity() {
 
