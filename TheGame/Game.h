@@ -6,10 +6,15 @@ using namespace sf;
 class Game{
 private:
 	//string state;
+	bool playing;
 	int gameLevel;
 	int levelOfComplexity; // easy, medium, hard. depends on amount of enemy, weapons etc
 	std::list<Entity*> entities;
 	std::list<Chest*> chests;
+	void generatingObjectsOnMap(Player&);
+	void drawMap(RenderWindow&);
+	void updateEntities(Player&, float&);
+	void updateChests(Player&, RenderWindow&);
 protected:
 	Clock clock;
 	Image map_image;
@@ -18,19 +23,24 @@ protected:
 	Font font;
 	Text text;
 public:
+	
 	Game();
 	Game(int, int);
 	void init();
-	void play();
-	void generatingObjectsOnMap(Player&);
-	void drawMap(RenderWindow&);
-	void updateEntities(Player&, float&);
-	void updateChests(Player&, RenderWindow&);
+	bool play();
+	
+	void restartGame();
+	bool isPlaying();
 };
 
 Game::Game() {
+	playing = true;
 	gameLevel = 1;
 	levelOfComplexity = 1;
+}
+
+bool Game::isPlaying() {
+	return playing;
 }
 
 Game::Game(int gameLevel, int levelOfComplexity) {
@@ -46,6 +56,7 @@ void Game::init() {
 	text.setFont(font);
 	text.setCharacterSize(40);
 	text.setPosition(view.getCenter());
+	playing = false;
 }
 
 void Game::generatingObjectsOnMap(Player &player) {
@@ -66,6 +77,11 @@ void Game::generatingObjectsOnMap(Player &player) {
 	for (auto chest : chests) {
 		chest->setChestSize(chestCount);
 	}
+}
+
+void Game::restartGame() {
+	this->entities.clear();
+	this->chests.clear();
 }
 
 void Game::drawMap(RenderWindow &window) {
@@ -106,7 +122,7 @@ void Game::updateEntities(Player& player, float& time) {
 		else iter++;
 	}
 }
-void Game::play() {
+bool Game::play() {
 	RenderWindow window(sf::VideoMode(800, 600), "Kill all bad dogs 2");
 
 	Player player(sf::Vector2f(200, 200), 100);
@@ -129,6 +145,8 @@ void Game::play() {
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
 				window.close();
+				playing = false;
+				return false;
 			}
 		}
 
@@ -191,9 +209,13 @@ void Game::play() {
 			window.draw(text);
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
 				std::cout << "lol";
+				playing = true;
+				return true;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 				window.close();
+				playing = false;
+				return false;
 			}
 
 		}
