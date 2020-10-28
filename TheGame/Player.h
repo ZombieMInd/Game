@@ -88,11 +88,14 @@ void Player::update(float time, sf::Vector2f pos) {
 	setAttackCircle();
 	if (getAttacking()) {
 		for (auto ent : entities) {
+			std::cout << "Dist to ent " << distanceTo(ent->getPos()) << std::endl;
+			std::cout << "Angel to ent " << getAngel(ent->getPos()) << std::endl;
+			std::cout << "Dir " << getDir() << std::endl;
 			if (distanceTo(ent->getPos()) <= attackCircle.x &&
 				getAngel(ent->getPos()) < getDir() + attackCircle.y &&
 				getAngel(ent->getPos()) > getDir() - attackCircle.y)
 				ent->makeDamage(10);
-			std::cout << ent->getHP() << std::endl;
+			//std::cout << ent->getHP() << std::endl;
 		}
 		setAttacking(false);
 	}
@@ -158,7 +161,7 @@ void Player::opening_chest() {
 
 void Player::setAttackCircle() {
 	if (weapon == "sword")
-		attackCircle = sf::Vector2f(150, 60);
+		attackCircle = sf::Vector2f(200, 100);
 }
 
 void Player::makeDamage(int damage) {
@@ -206,6 +209,7 @@ void Player::pickUpItem(PassiveItem* item) {
 
 void Player::pickUpWeapon(Weapon* wep) {
 	std::cout << "Weapon" << "\n";
+	weapon = "sword";
 }
 
 void Player::displayStat() {

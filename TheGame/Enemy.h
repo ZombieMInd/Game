@@ -53,7 +53,7 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 		if ((distanceTo(sprite.getPosition()) <= radiusAttack.x)) {
 			if (attackTimer.getElapsedTime().asMilliseconds() > 300) {
 				player->makeDamage(damage * 10);
-				std::cout << damage * 10 << " " << player->getHP() << std::endl;
+				std::cout << "Damage to player " << damage * 10 << "; player hp " << player->getHP() << std::endl;
 				attackTimer.restart();
 			}
 		}
@@ -132,7 +132,7 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 void Enemy::makeDamage(int damage) {
 	hp -= damage;
 	sprite.setColor(sf::Color(255, 0, 0, 100));
-	std::cout << damage << std::endl;
+	std::cout << "Damage to enemy " << damage << std::endl;
 }
 
 int Enemy::getHP() {
