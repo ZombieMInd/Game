@@ -11,7 +11,7 @@ private:
 	String enemyType;
 	sf::Vector2f radiusAttack;// первое это длина прямоугольника который BadDog кусает, вторая это ширина
 	Player *player;
-
+	sf::Clock changeSpriteTimer;
 public:
 	Enemy(sf::Vector2f pos, int health, String type);
 	void update(float time, sf::Vector2f pos);
@@ -37,6 +37,11 @@ void Enemy::setPlayer(Player *player) {
 }
 
 void Enemy::update(float time, sf::Vector2f playerPos) {
+
+	if (changeSpriteTimer.getElapsedTime().asMilliseconds() > 100 && hp < 100) {
+		sprite.setColor(sf::Color::White);
+	}
+
 	behavior(playerPos);
 	if (speed.x != 0 || speed.y != 0) {
 		runAnimation();
@@ -130,9 +135,10 @@ void Enemy::enemyInteractionWithMap(float x, float y, float dx, float dy) {
 }
 
 void Enemy::makeDamage(int damage) {
+	changeSpriteTimer.restart();
 	hp -= damage;
 	sprite.setColor(sf::Color(255, 0, 0, 100));
-	std::cout << "Damage to enemy " << damage << std::endl;
+	std::cout << "Damage to enemy " << damage << " Enemy hp " << hp << std::endl;
 }
 
 int Enemy::getHP() {

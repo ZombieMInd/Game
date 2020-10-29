@@ -4,10 +4,12 @@
 
 class Player : public Entity {
 private:
-	int hp;
+	double hp;
 	sf::Vector2f attackCircle;//первая координата - r радиус поражения, вторая fi - угол поражения
 	sf::String weapon;
+	//Weapon* weapon;
 	sf::Clock attackTimer; //таймер засекающий время между ударами
+	sf::Clock changeSpriteTimer;
 	int attackSpeed; //кол-во милсек до следующего удара
 	int animationFrame;
 	float speedScale;
@@ -79,12 +81,24 @@ void Player::controle() {
 }
 
 void Player::update(float time, sf::Vector2f pos) {
+	if (changeSpriteTimer.getElapsedTime().asMilliseconds() > 100 && hp < 100) {
+		sprite.setColor(sf::Color::White);
+	}
+	
 	GetPlayerCoordinateForView(sprite.getPosition().x, sprite.getPosition().y);
 	controle();
 	attackAnimation();
 	move(time);
 	interactionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
 	textureRotate(pos);
+	if (hp < 100) {
+		hp += 0.01;
+		std::cout << "Hp now: " << hp << std::endl;
+	}
+	
+	/*if (weapon != nullptr) {
+		setAttackCircle();
+	}*/
 	setAttackCircle();
 	if (getAttacking()) {
 		for (auto ent : entities) {
@@ -155,18 +169,20 @@ void Player::interactionWithMap(float x, float y, float dx, float dy) {
 
 void Player::opening_chest() {
 	TileMap[map_i][map_j] = 't';
-	weapon = "sword";
+	//weapon = "sword";
 	sprite.setTextureRect(sf::IntRect(0, 365, 90, 455));
 }
 
 void Player::setAttackCircle() {
-	if (weapon == "sword")
+	if (weapon == "sword") {
 		attackCircle = sf::Vector2f(200, 100);
+	}
 }
 
 void Player::makeDamage(int damage) {
 	hp -= damage;
 	sprite.setColor(sf::Color(255, 0, 0, 100));
+	changeSpriteTimer.restart();
 }
 
 int Player::getHP() {
