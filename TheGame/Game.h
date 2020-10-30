@@ -6,6 +6,7 @@ using namespace sf;
 class Game{
 private:
 	//string state;
+	bool isRestarted = false;
 	bool playing;
 	int gameLevel;
 	int levelOfComplexity; // easy, medium, hard. depends on amount of enemy, weapons etc
@@ -15,6 +16,7 @@ private:
 	void drawMap(RenderWindow&);
 	void updateEntities(Player&, float&);
 	void updateChests(Player&, RenderWindow&);
+	void menu(RenderWindow&);
 protected:
 	Clock clock;
 	Image map_image;
@@ -57,6 +59,82 @@ void Game::init() {
 	text.setCharacterSize(40);
 	text.setPosition(view.getCenter());
 	playing = false;
+}
+
+void Game::menu(RenderWindow& window) {
+	Texture menuTextureNewGame, menuTextureAbout, menuTextureExit,
+		aboutTexture, menuTextureBackground;
+	menuTextureNewGame.loadFromFile("assets/newGame.png");
+	menuTextureAbout.loadFromFile("assets/about.png");
+	menuTextureExit.loadFromFile("assets/exit.png");
+	aboutTexture.loadFromFile("assets/cave.jpg");
+	menuTextureBackground.loadFromFile("assets/cave.jpg");
+	
+	Sprite menuNewGame(menuTextureNewGame), menuAbout(menuTextureAbout), menuExit(menuTextureExit),
+		aboutWindow(aboutTexture), menuBackground(menuTextureBackground);
+
+	menuBackground.setScale(window.getSize().x / menuBackground.getLocalBounds().width,
+		window.getSize().y / menuBackground.getLocalBounds().height);
+	bool isMenu = true;
+	int menuFlag = 0;
+	menuNewGame.setPosition(100, 30);
+	menuAbout.setPosition(100, 90);
+	menuExit.setPosition(100, 150);
+	menuBackground.setPosition(0, 0);
+
+	while (isMenu){
+		sf::Event event;
+
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				window.close();
+				isMenu = false;
+			}
+		}
+
+		menuNewGame.setColor(Color::White);
+		menuAbout.setColor(Color::White);
+		menuExit.setColor(Color::White);
+		menuFlag = 0;
+		window.clear(Color(129, 181, 221));
+
+		if (IntRect(100, 30, 300, 50).contains(Mouse::getPosition(window))) {
+			menuNewGame.setColor(Color::Blue);
+			menuFlag = 1;
+		}
+		if (IntRect(100, 90, 300, 50).contains(Mouse::getPosition(window))) {
+			menuAbout.setColor(Color::Blue);
+			menuFlag = 2;
+		}
+		if (IntRect(100, 150, 300, 50).contains(Mouse::getPosition(window))) {
+			menuExit.setColor(Color::Blue);
+			menuFlag = 3;
+		}
+
+		if (Mouse::isButtonPressed(Mouse::Left)){
+
+			if (menuFlag == 1) {
+				isMenu = false;
+			}  
+			if (menuFlag == 2) {
+				window.draw(aboutWindow);
+				window.display();
+				while (!Keyboard::isKeyPressed(Keyboard::Escape));
+			}
+			if (menuFlag == 3) {
+				window.close();
+				isMenu = false;
+			}
+
+		}
+
+		window.draw(menuBackground);
+		window.draw(menuNewGame);
+		window.draw(menuAbout);
+		window.draw(menuExit);
+
+		window.display();
+	}
 }
 
 void Game::generatingObjectsOnMap(Player &player) {
@@ -124,7 +202,9 @@ void Game::updateEntities(Player& player, float& time) {
 }
 bool Game::play() {
 	RenderWindow window(sf::VideoMode(800, 600), "Kill all bad dogs 2");
-
+	if (!isRestarted) {
+		menu(window);
+	}
 	Player player(sf::Vector2f(200, 200), 100);
 	
 	generatingObjectsOnMap(player);
@@ -209,6 +289,7 @@ bool Game::play() {
 			window.draw(text);
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
 				std::cout << "lol";
+				isRestarted = true;
 				playing = true;
 				return true;
 			}
