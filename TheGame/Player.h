@@ -75,9 +75,9 @@ void Player::controle() {
 			std::cout << getAngel(sf::Vector2f(1000, 1000)) << " " << distanceTo(sf::Vector2f(1000, 1000)) << std::endl;
 		}
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) {
+	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) {
 		displayStat();
-	}
+	}*/
 }
 
 void Player::update(float time, sf::Vector2f pos) {

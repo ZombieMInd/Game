@@ -1,6 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Enemy.h"
+//#include "Messages.h"
+#include <string>
+#include <sstream>
 
 using namespace sf;
 class Game{
@@ -17,9 +20,13 @@ private:
 	void updateEntities(Player&, float&);
 	void updateChests(Player&, RenderWindow&);
 	void menu(RenderWindow&);
+	bool showMissionText = true;////////
 protected:
 	Clock clock;
 	Image map_image;
+	Image quest_image;
+	Texture quest_texture;
+	Sprite s_quest;
 	Texture map;
 	Sprite s_map;
 	Font font;
@@ -33,6 +40,8 @@ public:
 	
 	void restartGame();
 	bool isPlaying();
+	int getCurrentMission(int);
+	std::string getTextMission(int);
 };
 
 Game::Game() {
@@ -58,8 +67,57 @@ void Game::init() {
 	text.setFont(font);
 	text.setCharacterSize(40);
 	text.setPosition(view.getCenter());
+	quest_image.loadFromFile("assets/missionbg.jpg");
+	quest_image.createMaskFromColor(Color(0, 0, 0));
+	quest_texture.loadFromImage(quest_image);
+	s_quest.setTexture(quest_texture);
+	s_quest.setTextureRect(IntRect(0, 0, 340, 510));
+	s_quest.setScale(0.6f, 0.6f);
 	playing = false;
 }
+
+int Game::getCurrentMission(int x) {
+
+	int mission = 0;
+	if ((x > 0) && (x < 600)) {
+		mission = 0;
+	}
+	if (x > 400) {
+		mission = 1;
+	}
+	if (x > 700) {
+		mission = 2;
+	}
+	if (x > 2200) {
+		mission = 3;
+	}
+
+	return mission;
+}
+
+
+std::string Game::getTextMission(int currentMission) {
+
+	std::string missionText = "";
+
+	switch (currentMission) {
+
+	case 0:
+		missionText = "\nНачальный этап и \nинструкции к игре";
+		break;
+	case 1:
+		missionText = "\nMission 1\n\nВот твоя первая\n миссия, на\n этом уровне \nтебе стоит опасаться\n ... бла-бла-бла ...";
+		break;
+	case 2:
+		missionText = "\nMission 2\n Необходимо решить\n логическую задачку,\n чтобы пройти дальше ";
+		break;
+	case 3:
+		missionText = "\nИ так далее \nи тому подобное.....";
+		break;
+	}
+
+	return missionText;
+};
 
 void Game::menu(RenderWindow& window) {
 	Texture menuTextureNewGame, menuTextureAbout, menuTextureExit,
@@ -75,6 +133,8 @@ void Game::menu(RenderWindow& window) {
 
 	menuBackground.setScale(window.getSize().x / menuBackground.getLocalBounds().width,
 		window.getSize().y / menuBackground.getLocalBounds().height);
+	aboutWindow.setScale(window.getSize().x / aboutWindow.getLocalBounds().width,
+		window.getSize().y / aboutWindow.getLocalBounds().height);
 	bool isMenu = true;
 	int menuFlag = 0;
 	menuNewGame.setPosition(100, 30);
@@ -200,6 +260,7 @@ void Game::updateEntities(Player& player, float& time) {
 		else iter++;
 	}
 }
+
 bool Game::play() {
 	RenderWindow window(sf::VideoMode(800, 600), "Kill all bad dogs 2");
 	if (!isRestarted) {
@@ -228,8 +289,35 @@ bool Game::play() {
 				playing = false;
 				return false;
 			}
-		}
+			if (event.type == Event::KeyPressed) {
+				if ((event.key.code == Keyboard::Tab)) {//если клавиша ТАБ
 
+
+					switch (showMissionText) {//переключатель, реагирующий на логическую переменную showMissionText
+
+						case true: {
+							std::ostringstream playerHealthString;//строка здоровья игрока
+							playerHealthString << player.getHP(); //заносим в строку здоровье 
+							std::ostringstream task;//строка текста миссии
+							task << getTextMission(getCurrentMission(player.getPos().x));//вызывается функция getTextMission (она возвращает текст миссии), которая принимает в качестве аргумента функцию getCurrentMission(возвращающую номер миссии), а уже эта ф-ция принимает в качестве аргумента функцию p.getplayercoordinateX() (эта ф-ция возвращает Икс координату игрока)
+							text.setString("Здоровье: " + playerHealthString.str() + "\n" + task.str());//задаем
+							text.setPosition(view.getCenter());//позиция всего этого текстового блока
+							s_quest.setPosition(view.getCenter());//позиция фона для блока
+							showMissionText = false;//эта строка позволяет убрать все что мы вывели на экране
+							break;//выходим , чтобы не выполнить условие "false" (которое ниже)
+						}
+						case false: {
+							text.setString("");//если не нажата клавиша таб, то весь этот текст пустой
+							showMissionText = true;// а эта строка позволяет снова нажать клавишу таб и получить вывод на экран
+							break;
+						}
+					}
+					
+				}
+
+			}
+		}
+		
 		window.clear();
 
 		drawMap(window);
@@ -281,6 +369,11 @@ bool Game::play() {
 					window.draw(item->text);
 					itemIter++;
 				}
+			}
+
+			if (!showMissionText) {
+				window.draw(s_quest);
+				window.draw(text);
 			}
 		}
 		else {

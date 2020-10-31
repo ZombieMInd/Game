@@ -1,6 +1,5 @@
 #pragma once
 #include "Game.h"
-
 using namespace sf;
 
 int main(){
