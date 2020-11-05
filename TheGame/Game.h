@@ -1,8 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Enemy.h"
+#include "Chest.h"
+#include "PassiveItem.h"
+#include "Weapon.h"
 
 using namespace sf;
+
 class Game{
 private:
 	//string state;

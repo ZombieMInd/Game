@@ -1,6 +1,8 @@
 #pragma once
 #include "Entity.h"
 #include "Objects.h"
+#include "PassiveItem.h"
+#include "Weapon.h"
 
 class Player : public Entity {
 private:
