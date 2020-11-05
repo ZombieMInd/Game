@@ -9,11 +9,15 @@ class Chest : public Object {
 	int chestSize;
 public:
 	Chest(sf::Vector2f position);
-	void objectGain();
+
 	void interaction(sf::Vector2f playerPos);
 	void chestOpening();
 	void update(sf::Vector2f playerPos);
 	void setChestSize(int);
+	int checkOfOpened();
+
+	Weapon* weaponGain();
+	PassiveItem* passiveItemGain();
 };
 
 Chest::Chest(sf::Vector2f pos) :
@@ -43,15 +47,23 @@ void Chest::interaction(sf::Vector2f playerPos) {
 void Chest::setChestSize(int size) {
 	chestSize = size;
 }
+
+int Chest::checkOfOpened()
+{
+	if (openTimer.getElapsedTime().asMilliseconds() >= 500 && isOpen && isGained == false) {
+		return classOfChest;
+	}
+	else {
+		return 0;
+	}
+}
+
 void Chest::update(sf::Vector2f playerPos) {
 	if (distanceTo(playerPos) <= 100 && isOpen == false) {
 		interaction(playerPos);
 	}
 	else {
 		text.setString("");
-	}
-	if (openTimer.getElapsedTime().asMilliseconds() >= 500 && isOpen && isGained == false) {
-		objectGain();
 	}
 }
 
@@ -61,19 +73,15 @@ void Chest::chestOpening() {
 	openTimer.restart();
 }
 
-std::list<Weapon*> weapons;
-std::list<Weapon*>::iterator wepIter;
-std::list<PassiveItem*> items;
-std::list<PassiveItem*>::iterator itemIter;
-
-void Chest::objectGain() {
+Weapon* Chest::weaponGain() {
 	int numOfItem = rand() % 2 + 1;
-	std::cout << classOfChest << " " << numOfItem << "\n";
-	if (classOfChest == 1) {
-		weapons.push_back(new Weapon(position, numOfItem));
-	}
-	if (classOfChest == 2) {
-		items.push_back(new PassiveItem(position, rand() % 3 + 1));
-	}
 	isGained = true;
+	return new Weapon(position, numOfItem);
+}
+
+inline PassiveItem* Chest::passiveItemGain()
+{
+	int numOfItem = rand() % 3 + 1;
+	isGained = true;
+	return new PassiveItem(position, numOfItem);
 }

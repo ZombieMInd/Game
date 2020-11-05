@@ -21,6 +21,11 @@ private:
 	void updateEntities(Player&, float&);
 	void updateChests(Player&, RenderWindow&);
 	void menu(RenderWindow&);
+
+	std::list<Weapon*> weapons;
+	std::list<Weapon*>::iterator wepIter;
+	std::list<PassiveItem*> items;
+	std::list<PassiveItem*>::iterator itemIter;
 protected:
 	Clock clock;
 	Image map_image;
@@ -188,6 +193,12 @@ void Game::updateChests(Player& player, RenderWindow &window) {
 	for (std::list<Chest*>::iterator chestIter = chests.begin(); chestIter != chests.end();) {
 		Chest* chest = *chestIter;
 		chest->update(player.getPos());
+		if (chest->checkOfOpened() == 1) {
+			weapons.push_back(chest->weaponGain());
+		}
+		else if (chest->checkOfOpened() == 2) {
+			items.push_back(chest->passiveItemGain());
+		}
 		window.draw(chest->text);
 		chestIter++;
 	}
