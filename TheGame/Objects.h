@@ -1,6 +1,7 @@
 #pragma once
 
-
+int COUNT_OF_ITEM_TYPES = 3;
+int COUNT_OF_WEAPON_TYPES = 2;
 
 class Object {
 private:

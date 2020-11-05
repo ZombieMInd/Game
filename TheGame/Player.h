@@ -8,12 +8,13 @@ class Player : public Entity {
 private:
 	double hp;
 	sf::Vector2f attackCircle;//первая координата - r радиус поражения, вторая fi - угол поражения
-	sf::String weapon;
-	//Weapon* weapon;
+	//std::string weapon;
+	Weapon* weapon;
 	sf::Clock attackTimer; //таймер засекающий время между ударами
 	sf::Clock changeSpriteTimer;
 	int attackSpeed; //кол-во милсек до следующего удара
 	int animationFrame;
+	int damage;
 	float speedScale;
 	std::list<Entity*> entities;
 public:
@@ -25,6 +26,7 @@ public:
 	void interactionWithMap(float x, float y, float dx, float dy);
 	void opening_chest();
 	void setAttackCircle();
+	void setDamage();
 	void makeDamage(int damage);
 	int getHP();
 	void attackAnimation();
@@ -95,22 +97,22 @@ void Player::update(float time, sf::Vector2f pos) {
 	textureRotate(pos);
 	if (hp < 100) {
 		hp += 0.01;
-		std::cout << "Hp now: " << hp << std::endl;
+		//std::cout << "Hp now: " << hp << std::endl;
 	}
 	
 	/*if (weapon != nullptr) {
 		setAttackCircle();
 	}*/
-	setAttackCircle();
+	
 	if (getAttacking()) {
 		for (auto ent : entities) {
-			std::cout << "Dist to ent " << distanceTo(ent->getPos()) << std::endl;
+			/*std::cout << "Dist to ent " << distanceTo(ent->getPos()) << std::endl;
 			std::cout << "Angel to ent " << getAngel(ent->getPos()) << std::endl;
-			std::cout << "Dir " << getDir() << std::endl;
+			std::cout << "Dir " << getDir() << std::endl;*/
 			if (distanceTo(ent->getPos()) <= attackCircle.x &&
 				getAngel(ent->getPos()) < getDir() + attackCircle.y &&
 				getAngel(ent->getPos()) > getDir() - attackCircle.y)
-				ent->makeDamage(10);
+				ent->makeDamage(damage);
 			//std::cout << ent->getHP() << std::endl;
 		}
 		setAttacking(false);
@@ -176,9 +178,13 @@ void Player::opening_chest() {
 }
 
 void Player::setAttackCircle() {
-	if (weapon == "sword") {
-		attackCircle = sf::Vector2f(200, 100);
-	}
+	if (weapon != nullptr)
+		attackCircle = weapon->getAttackCircle();
+}
+
+inline void Player::setDamage()
+{
+	damage = weapon->getDamage();
 }
 
 void Player::makeDamage(int damage) {
@@ -226,8 +232,10 @@ void Player::pickUpItem(PassiveItem* item) {
 }
 
 void Player::pickUpWeapon(Weapon* wep) {
-	std::cout << "Weapon" << "\n";
-	weapon = "sword";
+	std::cout << "Weapon: " << wep->getWeaponName() << "\n";
+	weapon = wep;
+	setAttackCircle();
+	setDamage();
 }
 
 void Player::displayStat() {

@@ -74,14 +74,14 @@ void Chest::chestOpening() {
 }
 
 Weapon* Chest::weaponGain() {
-	int numOfItem = rand() % 2 + 1;
+	int numOfItem = rand() % COUNT_OF_WEAPON_TYPES + 1;
 	isGained = true;
 	return new Weapon(position, numOfItem);
 }
 
 inline PassiveItem* Chest::passiveItemGain()
 {
-	int numOfItem = rand() % 3 + 1;
+	int numOfItem = rand() % COUNT_OF_ITEM_TYPES + 1;
 	isGained = true;
 	return new PassiveItem(position, numOfItem);
 }
