@@ -30,6 +30,7 @@ public:
 	void pickUpWeapon(Weapon* wep);
 	void displayStat();
 	bool isAlive();
+	bool isWallUnderAttack(float, float);
 	void setEntities(std::list<Entity*> entities);
 };
 
@@ -102,19 +103,38 @@ void Player::update(float time, sf::Vector2f pos) {
 	setAttackCircle();
 	if (getAttacking()) {
 		for (auto ent : entities) {
-			std::cout << "Dist to ent " << distanceTo(ent->getPos()) << std::endl;
-			std::cout << "Angel to ent " << getAngel(ent->getPos()) << std::endl;
+			float distanceToEnt = distanceTo(ent->getPos());
+			float angelToEnt = getAngel(ent->getPos());
+			std::cout << "Dist to ent " << distanceToEnt << std::endl;
+			std::cout << "Angel to ent " << angelToEnt << std::endl;
 			std::cout << "Dir " << getDir() << std::endl;
-			if (distanceTo(ent->getPos()) <= attackCircle.x &&
-				getAngel(ent->getPos()) < getDir() + attackCircle.y &&
-				getAngel(ent->getPos()) > getDir() - attackCircle.y)
-				ent->makeDamage(10);
+			if (distanceToEnt <= attackCircle.x &&
+				angelToEnt < getDir() + attackCircle.y &&
+				angelToEnt > getDir() - attackCircle.y) {
+				if (isWallUnderAttack(distanceToEnt, getDir())) {
+					ent->makeDamage(10);
+				}
+				
+
+			}
+				
 			//std::cout << ent->getHP() << std::endl;
 		}
 		setAttacking(false);
 	}
 }
 
+bool Player::isWallUnderAttack(float distanceToEnt, float angelToEnt ) {
+	angelToEnt *= 3.14159265;
+	int i = (sprite.getPosition().x + (distanceToEnt / 2))/ BLOCK_SIZE;
+	int j = (sprite.getPosition().y + (distanceToEnt / 2)) / BLOCK_SIZE;
+	/*std::cout << std::endl << std::endl << " Player position " << std::endl << std::endl
+		<< (char)TileMap[j][i];*/
+	if ((char)TileMap[j][i] == '0') {
+		return false;
+	}
+	return true;
+}
 void Player::interactionWithMap(float x, float y, float dx, float dy) {
 	float h, w;
 	h = getRealSize().y / 2;

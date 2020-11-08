@@ -65,14 +65,14 @@ void Game::init() {
 	s_map.setTexture(map);
 	font.loadFromFile("assets/CyrilicOld.ttf");
 	text.setFont(font);
-	text.setCharacterSize(40);
+	text.setCharacterSize(28);
 	text.setPosition(view.getCenter());
 	quest_image.loadFromFile("assets/missionbg.jpg");
 	quest_image.createMaskFromColor(Color(0, 0, 0));
 	quest_texture.loadFromImage(quest_image);
 	s_quest.setTexture(quest_texture);
 	s_quest.setTextureRect(IntRect(0, 0, 340, 510));
-	s_quest.setScale(0.6f, 0.6f);
+	//s_quest.setScale(0.6f, 0.6f);
 	playing = false;
 }
 
@@ -381,7 +381,7 @@ bool Game::play() {
 			text.setPosition(view.getCenter());
 			window.draw(text);
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
-				std::cout << "lol";
+				std::cout << "Restart ";
 				isRestarted = true;
 				playing = true;
 				return true;

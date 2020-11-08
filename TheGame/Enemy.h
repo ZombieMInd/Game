@@ -69,6 +69,7 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 
 void Enemy::behavior(sf::Vector2f playerPos) {
 	float time = behaviorTimer.getElapsedTime().asMilliseconds();
+	//std::cout << "Distance To PLayer " << distanceTo(playerPos) << std::endl;
 	if (distanceTo(playerPos) <= 700 && distanceTo(playerPos) > 400) {
 		if (time > 100) {
 			speed = getSpeed(playerPos);
