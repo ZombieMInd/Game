@@ -1,5 +1,7 @@
 #pragma once
-//#include "Enemy.h"
+
+int COUNT_OF_ITEM_TYPES = 3;
+int COUNT_OF_WEAPON_TYPES = 2;
 
 class Object {
 private:
@@ -31,7 +33,7 @@ Object::Object(sf::Vector2f pos, sf::Vector2i s) {
 	text.setFont(font);
 	text.setCharacterSize(32);
 	text.setPosition(pos);
-	bool isPickedUp = false;
+	isPickedUp = false;
 }
 
 Object::~Object() {
@@ -56,193 +58,13 @@ float Object::distanceTo(sf::Vector2f pos) {
 	return sqrtf(dir.x * dir.x + dir.y * dir.y);
 }
 
-class Chest : public Object {
-	unsigned int classOfChest; //будут несколько типов сундуков
-	bool isOpen;
-	bool isGained;
-	sf::Clock openTimer;
-	int chestSize;
-public:
-	Chest(sf::Vector2f position);
-	void objectGain();
-	void interaction(sf::Vector2f playerPos);
-	void chestOpening();
-	void update(sf::Vector2f playerPos);
-	void setChestSize(int);
-};
-
-
-Chest::Chest(sf::Vector2f pos) :
-	Object(pos, sf::Vector2i(94, 94)) {
-	setTexturePos(sf::Vector2i(890, 320), sf::Vector2i(94, 94));
-	text.setStyle(sf::Text::Bold);
-	text.setString("");
-	if (chestSize == 1) { //первый или ближайший сундук всегда с оружием
-		classOfChest = 1;
-	}
-	else {
-		classOfChest = rand() % 2 + 1;
-	}
-	isOpen = false;
-	isGained = false;
-}
-
-void Chest::interaction(sf::Vector2f playerPos) {
-
-	text.setString("Press (Z) to open this chest");
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-		chestOpening();
-	}
-}
-
-
-void Chest::setChestSize(int size) {
-	chestSize = size;
-}
-void Chest::update(sf::Vector2f playerPos) {
-	if (distanceTo(playerPos) <= 100 && isOpen == false) {
-		interaction(playerPos);
-	}
-	else {
-		text.setString("");
-	}
-	if (openTimer.getElapsedTime().asMilliseconds() >= 500 && isOpen && isGained == false) {
-		objectGain();
-	}
-}
-
 struct Buff { //структура для определения бафа от предметов
 	int typeOfBuff; // будет несколько типов (увеличение скорости бега/атаки, увеличение хп и тд)
 	float buffScale; // нужно сделать документацию с подробными списками
 };
 
-class Weapon : public Object {
-	int classOfWeapon;
-	int damage;
-	sf::String weaponName;
-public:
-	void interaction(sf::Vector2f playerPos);
-	Weapon(sf::Vector2f position, int classOfWeapon);
-	~Weapon();
-	Weapon(sf::Vector2f position);
-	sf::String getWeaponName();
-};
-
-class PassiveItem : public Object {
-private:
-public:
-	~PassiveItem();
-	Buff buff;
-	PassiveItem(sf::Vector2f pos, int coi);
-	void interaction(sf::Vector2f playerPos);
-};
-
-Weapon::Weapon(sf::Vector2f pos) :
-	Object(pos, sf::Vector2i(94, 94)) {
-	weaponName = "nothing";
-	damage = 0;
-	classOfWeapon = 0;
-}
-
-Weapon::Weapon(sf::Vector2f pos, int cow) :
-	Object(pos, sf::Vector2i(94, 94)) {
-	if (cow == 1) { //меч
-		setTexturePos(sf::Vector2i(0, 280), sf::Vector2i(114, 29));
-		damage = 10;
-		weaponName = "sword";
-	}
-	if (cow == 2) { //второй меч
-		setTexturePos(sf::Vector2i(5, 345), sf::Vector2i(109, 24));
-		damage = 7;
-		weaponName = "second sword";
-	}
-	if (cow == 3) { //яблоко, какое яблоко в Weapon..?
-		setTexturePos(sf::Vector2i(155, 270), sf::Vector2i(39, 49));
-		damage = 0;
-	}
-	isPickedUp = false;
-}
-
-//sf::String Weapon::getWeaponName() {
-//	return weaponName;
-//}
-
-Weapon::~Weapon() {
-	std::cout << "Weapon destroyed!";
-}
-
-std::list<Weapon*> weapons;
-std::list<Weapon*>::iterator wepIter;
-std::list<PassiveItem*> items;
-std::list<PassiveItem*>::iterator itemIter;
-
-void Chest::chestOpening() {
-	isOpen = true;
-	setTexturePos(sf::Vector2i(890, 430), getSize());
-	openTimer.restart();
-}
-
-void Chest::objectGain() {
-	int numOfItem = rand() % 2 + 1;
-	std::cout << classOfChest << " " << numOfItem << "\n";
-	if (classOfChest == 1) {
-		weapons.push_back(new Weapon(position, numOfItem));
-	}
-	if (classOfChest == 2) {
-		items.push_back(new PassiveItem(position, rand() % 3 + 1));
-	}
-	isGained = true;
-}
-
-void Weapon::interaction(sf::Vector2f playerPos) {
-	if (distanceTo(playerPos) <= 150) {
-		text.setString("Press (Z) to take this weapon");
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-			isPickedUp = true;
-			weaponName = "sword";
-			
-		}
-	}
-	else {
-		text.setString("");
-	}
-	
-}
 
 
-PassiveItem::PassiveItem(sf::Vector2f pos, int coi):
-	Object(pos, sf::Vector2i(94, 94)) {
-	if (coi == 1) { //яблоко
-		setTexturePos(sf::Vector2i(155, 270), sf::Vector2i(39, 49));
-		buff.typeOfBuff = 1;
-		buff.buffScale = 100;
-	}
-	if (coi == 2) { //сапог
-		setTexturePos(sf::Vector2i(155, 345), sf::Vector2i(44, 34));
-		buff.typeOfBuff = 2;//скорость+
-		buff.buffScale = 0.5f;
-	}
-	if (coi == 3) { //очки
-		setTexturePos(sf::Vector2i(235, 285), sf::Vector2i(59, 29));
-		buff.typeOfBuff = 3;//зрение+?
-		buff.buffScale = 0.1f;
-	}
-	isPickedUp = false;
-}
 
-PassiveItem::~PassiveItem() {
-	std::cout << "Object destroyed" << "\n";
-	//delete this;
-}
 
-void PassiveItem::interaction(sf::Vector2f playerPos) {
-	if (distanceTo(playerPos) <= 150) {
-		text.setString("Press (Z) to take this item");
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-			isPickedUp = true;
-		}
-	}
-	else {
-		text.setString("");
-	}
-}
+

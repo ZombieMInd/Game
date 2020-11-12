@@ -4,8 +4,12 @@
 //#include "Messages.h"
 #include <string>
 #include <sstream>
+#include "Chest.h"
+#include "PassiveItem.h"
+#include "Weapon.h"
 
 using namespace sf;
+
 class Game{
 private:
 	//string state;
@@ -22,6 +26,11 @@ private:
 	void menu(RenderWindow&);
 	bool showMissionText = true;////////
 	bool isPlayerWin();
+
+	std::list<Weapon*> weapons;
+	std::list<Weapon*>::iterator wepIter;
+	std::list<PassiveItem*> items;
+	std::list<PassiveItem*>::iterator itemIter;
 protected:
 	Clock clock;
 	Image map_image;
@@ -235,6 +244,12 @@ void Game::updateChests(Player& player, RenderWindow &window) {
 	for (std::list<Chest*>::iterator chestIter = chests.begin(); chestIter != chests.end();) {
 		Chest* chest = *chestIter;
 		chest->update(player.getPos());
+		if (chest->checkOfOpened() == 1) {
+			weapons.push_back(chest->weaponGain());
+		}
+		else if (chest->checkOfOpened() == 2) {
+			items.push_back(chest->passiveItemGain());
+		}
 		window.draw(chest->text);
 		chestIter++;
 	}
