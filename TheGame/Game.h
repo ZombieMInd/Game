@@ -21,6 +21,7 @@ private:
 	void updateChests(Player&, RenderWindow&);
 	void menu(RenderWindow&);
 	bool showMissionText = true;////////
+	bool isPlayerWin();
 protected:
 	Clock clock;
 	Image map_image;
@@ -53,7 +54,9 @@ Game::Game() {
 bool Game::isPlaying() {
 	return playing;
 }
-
+bool Game::isPlayerWin() {
+	return entities.size() < 1;
+}
 Game::Game(int gameLevel, int levelOfComplexity) {
 	this->gameLevel = gameLevel;
 	this->levelOfComplexity = levelOfComplexity;
@@ -65,7 +68,7 @@ void Game::init() {
 	s_map.setTexture(map);
 	font.loadFromFile("assets/CyrilicOld.ttf");
 	text.setFont(font);
-	text.setCharacterSize(28);
+	text.setCharacterSize(38);
 	text.setPosition(view.getCenter());
 	quest_image.loadFromFile("assets/missionbg.jpg");
 	quest_image.createMaskFromColor(Color(0, 0, 0));
@@ -85,12 +88,6 @@ int Game::getCurrentMission(int x) {
 	if (x > 400) {
 		mission = 1;
 	}
-	if (x > 700) {
-		mission = 2;
-	}
-	if (x > 2200) {
-		mission = 3;
-	}
 
 	return mission;
 }
@@ -103,16 +100,10 @@ std::string Game::getTextMission(int currentMission) {
 	switch (currentMission) {
 
 	case 0:
-		missionText = "\nНачальный этап и \nинструкции к игре";
+		missionText = "\tВозьмите оружие\n\t чтобы вы могли\n\t\t атаковать\n\t\t противников";
 		break;
 	case 1:
-		missionText = "\nMission 1\n\nВот твоя первая\n миссия, на\n этом уровне \nтебе стоит опасаться\n ... бла-бла-бла ...";
-		break;
-	case 2:
-		missionText = "\nMission 2\n Необходимо решить\n логическую задачку,\n чтобы пройти дальше ";
-		break;
-	case 3:
-		missionText = "\nИ так далее \nи тому подобное.....";
+		missionText = "\t\tУбейте всех\n\t\tЗлых собак\n\tчтобы победить!\n\t\tЖелаем удачи!";
 		break;
 	}
 
@@ -267,11 +258,32 @@ bool Game::play() {
 		menu(window);
 	}
 	Player player(sf::Vector2f(200, 200), 100);
+
 	
+	
+
 	generatingObjectsOnMap(player);
 	player.setEntities(entities);
 	float time;
 	while (window.isOpen()) {
+
+		sf::Event event;
+		/*text.setString("");*/
+		/*if (isPlayerWin()) {
+			while (true) {
+				
+				while (window.pollEvent(event)) {
+					text.setString("HOORAY you won!\nit was hard battle..\nbut you did it\ncongrats!");
+					text.setPosition(view.getCenter());
+					window.draw(text);
+					if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+						window.close();
+						playing = false;
+						return false;
+					}
+				}
+			}
+		}*/
 
 		//для плавности и контроля игрока
 		time = clock.getElapsedTime().asMicroseconds();
@@ -282,7 +294,7 @@ bool Game::play() {
 		sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
 		sf::Vector2f pos = window.mapPixelToCoords(pixelPos);
 
-		sf::Event event;
+		
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
 				window.close();
@@ -300,9 +312,10 @@ bool Game::play() {
 							playerHealthString << player.getHP(); //заносим в строку здоровье 
 							std::ostringstream task;//строка текста миссии
 							task << getTextMission(getCurrentMission(player.getPos().x));//вызывается функция getTextMission (она возвращает текст миссии), которая принимает в качестве аргумента функцию getCurrentMission(возвращающую номер миссии), а уже эта ф-ция принимает в качестве аргумента функцию p.getplayercoordinateX() (эта ф-ция возвращает Икс координату игрока)
-							text.setString("Здоровье: " + playerHealthString.str() + "\n" + task.str());//задаем
-							text.setPosition(view.getCenter());//позиция всего этого текстового блока
-							s_quest.setPosition(view.getCenter());//позиция фона для блока
+							text.setString("\n	Здоровье: " + playerHealthString.str() + "\n\n" + task.str());//задаем
+							text.setFillColor(sf::Color::Black);
+							text.setPosition(view.getCenter().x - 450, view.getCenter().y - 450);//позиция всего этого текстового блока
+							s_quest.setPosition(view.getCenter().x - 450, view.getCenter().y - 450);//позиция фона для блока
 							showMissionText = false;//эта строка позволяет убрать все что мы вывели на экране
 							break;//выходим , чтобы не выполнить условие "false" (которое ниже)
 						}

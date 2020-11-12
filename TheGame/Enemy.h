@@ -26,7 +26,8 @@ public:
 };
 
 Enemy::Enemy(sf::Vector2f pos, int health, String type) :
-	Entity(pos, sf::Vector2f(154, 59), "G_v06.png") {
+	//Entity(pos, sf::Vector2f(154, 59), "G_v06.png") {
+	Entity(pos, sf::Vector2f(45, 45), "G_v06.png") {
 	hp = health;
 	enemyType = "BadDog";
 	setTexturePos(sf::Vector2i(10, 440), sf::Vector2i(154, 59));
