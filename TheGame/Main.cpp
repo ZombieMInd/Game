@@ -11,6 +11,6 @@ int main(){
 			game.restartGame();
 		}
 	}
-
+	
 	return EXIT_SUCCESS;
 }

@@ -7,6 +7,7 @@
 #include "Chest.h"
 #include "PassiveItem.h"
 #include "Weapon.h"
+#include "LifeBar.h"
 
 using namespace sf;
 
@@ -23,14 +24,17 @@ private:
 	void drawMap(RenderWindow&);
 	void updateEntities(Player&, float&);
 	void updateChests(Player&, RenderWindow&);
+	void updateItems(Player&, RenderWindow&);
+	void updateWeapons(Player&, RenderWindow&);
 	void menu(RenderWindow&);
 	bool showMissionText = true;////////
 	bool isPlayerWin();
+	void win(RenderWindow&);
 
 	std::list<Weapon*> weapons;
-	std::list<Weapon*>::iterator wepIter;
 	std::list<PassiveItem*> items;
-	std::list<PassiveItem*>::iterator itemIter;
+	
+	
 protected:
 	Clock clock;
 	Image map_image;
@@ -50,6 +54,7 @@ public:
 	
 	void restartGame();
 	bool isPlaying();
+
 	int getCurrentMission(int);
 	std::string getTextMission(int);
 };
@@ -85,12 +90,46 @@ void Game::init() {
 	s_quest.setTexture(quest_texture);
 	s_quest.setTextureRect(IntRect(0, 0, 340, 510));
 	//s_quest.setScale(0.6f, 0.6f);
+	
 	playing = false;
+}
+
+void Game::updateItems(Player &player, RenderWindow& window) {
+	for (std::list<PassiveItem*>::iterator itemIter = items.begin(); itemIter != items.end();) {
+		PassiveItem* item = *itemIter;
+		item->interaction(player.getPos());
+		if (item->isPickedUp) {
+			player.pickUpItem(item);
+			itemIter = items.erase(itemIter);
+			delete item;
+		}
+		else {
+			window.draw(item->text);
+			itemIter++;
+		}
+	}
+}
+
+void Game::updateWeapons(Player &player, RenderWindow& window) {
+	for (std::list<Weapon*>::iterator wepIter = weapons.begin(); wepIter != weapons.end();) {
+		Weapon* wep = *wepIter;
+		wep->interaction(player.getPos());
+		if (wep->isPickedUp) {
+			player.pickUpWeapon(wep);
+			wepIter = weapons.erase(wepIter);
+			delete wep;
+		}
+		else {
+			window.draw(wep->text);
+			wepIter++;
+		}
+	}
 }
 
 int Game::getCurrentMission(int x) {
 
 	int mission = 0;
+
 	if ((x > 0) && (x < 600)) {
 		mission = 0;
 	}
@@ -118,6 +157,44 @@ std::string Game::getTextMission(int currentMission) {
 
 	return missionText;
 };
+
+void Game::win(RenderWindow& window) {
+	Texture winTexture;
+	winTexture.loadFromFile("assets/win.jpg");
+	Sprite winSprite(winTexture);
+
+	winSprite.setScale(window.getSize().x / winSprite.getLocalBounds().width,
+		window.getSize().y / winSprite.getLocalBounds().height);
+
+	bool isWin = true;
+	
+	window.clear();
+
+	text.setCharacterSize(60);
+	text.setString("HOORAY you won!\nit was hard battle..\nbut you did it\ncongrats!");
+	text.setPosition(view.getCenter());
+
+	while (isWin) {
+		sf::Event event;
+		window.clear(Color(129, 181, 221));
+
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				window.close();
+				isWin = false;
+			}
+		}
+
+		
+		window.draw(text);
+			
+		
+		window.draw(winSprite);
+
+		window.display();
+	}
+
+}
 
 void Game::menu(RenderWindow& window) {
 	Texture menuTextureNewGame, menuTextureAbout, menuTextureExit,
@@ -274,7 +351,7 @@ bool Game::play() {
 	}
 	Player player(sf::Vector2f(200, 200), 100);
 
-	
+	LifeBar lifeBar;
 	
 
 	generatingObjectsOnMap(player);
@@ -283,22 +360,11 @@ bool Game::play() {
 	while (window.isOpen()) {
 
 		sf::Event event;
-		/*text.setString("");*/
-		/*if (isPlayerWin()) {
-			while (true) {
-				
-				while (window.pollEvent(event)) {
-					text.setString("HOORAY you won!\nit was hard battle..\nbut you did it\ncongrats!");
-					text.setPosition(view.getCenter());
-					window.draw(text);
-					if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-						window.close();
-						playing = false;
-						return false;
-					}
-				}
-			}
-		}*/
+
+
+		if (isPlayerWin()) {
+			break;
+		}
 
 		//для плавности и контроля игрока
 		time = clock.getElapsedTime().asMicroseconds();
@@ -310,6 +376,7 @@ bool Game::play() {
 		sf::Vector2f pos = window.mapPixelToCoords(pixelPos);
 
 		
+
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
 				window.close();
@@ -363,6 +430,7 @@ bool Game::play() {
 		window.setView(view);
 
 		if (player.isAlive()) {
+
 			player.update(time, pos);
 			window.draw(player.sprite);
 
@@ -370,34 +438,9 @@ bool Game::play() {
 
 			updateChests(player, window);
 
+			updateWeapons(player, window);
 
-			for (wepIter = weapons.begin(); wepIter != weapons.end();) {
-				Weapon* wep = *wepIter;
-				wep->interaction(player.getPos());
-				if (wep->isPickedUp) {
-					player.pickUpWeapon(wep);
-					wepIter = weapons.erase(wepIter);
-					delete wep;
-				}
-				else {
-					window.draw(wep->text);
-					wepIter++;
-				}
-			}
-
-			for (itemIter = items.begin(); itemIter != items.end();) {
-				PassiveItem* item = *itemIter;
-				item->interaction(player.getPos());
-				if (item->isPickedUp) {
-					player.pickUpItem(item);
-					itemIter = items.erase(itemIter);
-					delete item;
-				}
-				else {
-					window.draw(item->text);
-					itemIter++;
-				}
-			}
+			updateItems(player, window);
 
 			if (!showMissionText) {
 				window.draw(s_quest);
@@ -422,9 +465,19 @@ bool Game::play() {
 
 		}
 
+		lifeBar.update(player.getHP());
+		lifeBar.draw(window);
+
 		for (auto ent : entities) {
 			window.draw(ent->sprite);
 		}
+
+
 		window.display();
 	}
+
+	if (isPlayerWin()) {
+		win(window);
+	}
+	
 }

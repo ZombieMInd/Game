@@ -80,9 +80,6 @@ void Player::controle() {
 			std::cout << getAngel(sf::Vector2f(1000, 1000)) << " " << distanceTo(sf::Vector2f(1000, 1000)) << std::endl;
 		}
 	}
-	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) {
-		displayStat();
-	}*/
 }
 
 void Player::update(float time, sf::Vector2f pos) {
@@ -96,14 +93,11 @@ void Player::update(float time, sf::Vector2f pos) {
 	move(time);
 	interactionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
 	textureRotate(pos);
+
 	if (hp < 100) {
 		hp += 0.01;
-		//std::cout << "Hp now: " << hp << std::endl;
 	}
 	
-	/*if (weapon != nullptr) {
-		setAttackCircle();
-	}*/
 	
 	if (getAttacking()) {
 		for (auto ent : entities) {
@@ -117,10 +111,7 @@ void Player::update(float time, sf::Vector2f pos) {
 				if (isWallUnderAttack(distanceToEnt, getDir())) {
 					ent->makeDamage(10);
 				}
-				
-
 			}
-				
 			//std::cout << ent->getHP() << std::endl;
 		}
 		setAttacking(false);
@@ -201,8 +192,8 @@ void Player::setAttackCircle() {
 		attackCircle = weapon->getAttackCircle();
 }
 
-inline void Player::setDamage()
-{
+inline void Player::setDamage(){
+
 	damage = weapon->getDamage();
 }
 
