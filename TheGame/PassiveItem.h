@@ -15,7 +15,7 @@ PassiveItem::PassiveItem(sf::Vector2f pos, int coi) :
 	if (coi == 1) { //€блоко
 		setTexturePos(sf::Vector2i(155, 270), sf::Vector2i(39, 49));
 		buff.typeOfBuff = 1;
-		buff.buffScale = 100;
+		buff.buffScale = 0.7f;
 	}
 	if (coi == 2) { //сапог
 		setTexturePos(sf::Vector2i(155, 345), sf::Vector2i(44, 34));

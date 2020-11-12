@@ -30,11 +30,11 @@ private:
 	bool showMissionText = true;////////
 	bool isPlayerWin();
 	void win(RenderWindow&);
-
+	void generateEnemies(Player&);
 	std::list<Weapon*> weapons;
 	std::list<PassiveItem*> items;
 	
-	
+	int amountOfDadDogs;
 protected:
 	Clock clock;
 	Image map_image;
@@ -63,6 +63,7 @@ Game::Game() {
 	playing = true;
 	gameLevel = 1;
 	levelOfComplexity = 1;
+	amountOfDadDogs = 10;
 }
 
 bool Game::isPlaying() {
@@ -140,6 +141,25 @@ int Game::getCurrentMission(int x) {
 	return mission;
 }
 
+//void Game::generateEnemies(Player &player) {
+//	if (entities.size() < 3 && amountOfDadDogs > 0) {
+//		std::cout << amountOfDadDogs << std::endl;
+//		int i =	rand() % (HEIGHT_MAP - 5) ;
+//		int j = rand() % (WIDTH_MAP - 5);
+//		while ((char)TileMap[i][j] != ' ') {
+//			i = 10 + rand() % (HEIGHT_MAP - 5);
+//			j = 10 + rand() % (WIDTH_MAP - 5);
+//			std::cout << i << "   " << j << std::endl;
+//			
+//		}
+//		TileMap[i][j] = 'e';
+//		Enemy *enemy = new Enemy(Vector2f((j - 0.5) * BLOCK_SIZE, (i - 0.5) * BLOCK_SIZE), 100, " ");
+//		enemy->setPlayer(&player);
+//		entities.push_back(enemy);
+//		amountOfDadDogs--;
+//	}	
+//	
+//}
 
 std::string Game::getTextMission(int currentMission) {
 
@@ -375,7 +395,7 @@ bool Game::play() {
 		sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
 		sf::Vector2f pos = window.mapPixelToCoords(pixelPos);
 
-		
+		//generateEnemies(player);
 
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
