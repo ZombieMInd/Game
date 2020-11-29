@@ -77,7 +77,7 @@ void Player::controle() {
 			setAttacking(true);
 			attackTimer.restart();
 			//
-			std::cout << getAngel(sf::Vector2f(1000, 1000)) << " " << distanceTo(sf::Vector2f(1000, 1000)) << std::endl;
+			//std::cout << getAngel(sf::Vector2f(1000, 1000)) << " " << distanceTo(sf::Vector2f(1000, 1000)) << std::endl;
 		}
 	}
 }
@@ -89,7 +89,10 @@ void Player::update(float time, sf::Vector2f pos) {
 	
 	GetPlayerCoordinateForView(sprite.getPosition().x, sprite.getPosition().y);
 	controle();
-	attackAnimation();
+	if (weapon != nullptr) {
+		attackAnimation();
+	}
+	
 	move(time);
 	interactionWithMap(sprite.getPosition().x, sprite.getPosition().y, speed.x*time, speed.y*time);
 	textureRotate(pos);
@@ -103,8 +106,8 @@ void Player::update(float time, sf::Vector2f pos) {
 		for (auto ent : entities) {
 			float distanceToEnt = distanceTo(ent->getPos());
 			float angelToEnt = getAngel(ent->getPos());
-			std::cout << "Dist to ent " << distanceToEnt << std::endl;
-			std::cout << "Angel to ent " << angelToEnt << std::endl;
+			//std::cout << "Dist to ent " << distanceToEnt << std::endl;
+			//std::cout << "Angel to ent " << angelToEnt << std::endl;
 			if (distanceToEnt <= attackCircle.x &&
 				angelToEnt < getDir() + attackCircle.y &&
 				angelToEnt > getDir() - attackCircle.y) {
@@ -242,7 +245,7 @@ void Player::pickUpItem(PassiveItem* item) {
 }
 
 void Player::pickUpWeapon(Weapon* wep) {
-	std::cout << "Weapon: " << wep->getWeaponName() << "\n";
+	//std::cout << "Weapon: " << wep->getWeaponName() << "\n";
 	weapon = wep;
 	setAttackCircle();
 	setDamage();

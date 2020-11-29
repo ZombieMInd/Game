@@ -28,7 +28,7 @@ public:
 Enemy::Enemy(sf::Vector2f pos, int health, String type) :
 	Entity(pos, sf::Vector2f(154, 59), "G_v06.png") {
 	//Entity(pos, sf::Vector2f(45, 45), "G_v06.png") {
-	hp = 5;
+	hp = health;
 	enemyType = "BadDog";
 	setTexturePos(sf::Vector2i(10, 440), sf::Vector2i(154, 59));
 }
@@ -59,7 +59,7 @@ void Enemy::update(float time, sf::Vector2f playerPos) {
 		if ((distanceTo(sprite.getPosition()) <= radiusAttack.x)) {
 			if (attackTimer.getElapsedTime().asMilliseconds() > 300) {
 				player->makeDamage(damage * 10);
-				std::cout << "Damage to player " << damage * 10 << "; player hp " << player->getHP() << std::endl;
+				//std::cout << "Damage to player " << damage * 10 << "; player hp " << player->getHP() << std::endl;
 				attackTimer.restart();
 			}
 		}
@@ -140,7 +140,7 @@ void Enemy::makeDamage(int damage) {
 	changeSpriteTimer.restart();
 	hp -= damage;
 	sprite.setColor(sf::Color(255, 0, 0, 100));
-	std::cout << "Damage to enemy " << damage << " Enemy hp " << hp << std::endl;
+	//std::cout << "Damage to enemy " << damage << " Enemy hp " << hp << std::endl;
 }
 
 int Enemy::getHP() {

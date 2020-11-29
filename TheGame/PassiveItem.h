@@ -32,7 +32,7 @@ PassiveItem::PassiveItem(sf::Vector2f pos, int coi) :
 
 
 PassiveItem::~PassiveItem() {
-	std::cout << "Object destroyed" << "\n";
+	//std::cout << "Object destroyed" << "\n";
 	//delete this;
 }
 

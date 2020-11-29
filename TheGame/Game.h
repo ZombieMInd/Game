@@ -222,7 +222,7 @@ void Game::menu(RenderWindow& window) {
 	menuTextureNewGame.loadFromFile("assets/newGame.png");
 	menuTextureAbout.loadFromFile("assets/about.png");
 	menuTextureExit.loadFromFile("assets/exit.png");
-	aboutTexture.loadFromFile("assets/cave.jpg");
+	aboutTexture.loadFromFile("assets/cave-about-menu.jpg");
 	menuTextureBackground.loadFromFile("assets/cave.jpg");
 	
 	Sprite menuNewGame(menuTextureNewGame), menuAbout(menuTextureAbout), menuExit(menuTextureExit),

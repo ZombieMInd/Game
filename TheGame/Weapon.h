@@ -61,7 +61,7 @@ Weapon::Weapon(sf::Vector2f pos, int cow) :
 }
 
 Weapon::~Weapon() {
-	std::cout << "Weapon destroyed!";
+	//std::cout << "Weapon destroyed!";
 }
 
 void Weapon::interaction(sf::Vector2f playerPos) {
